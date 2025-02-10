@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Default Light Theme */
+:root {
+  --bg-color: white;
+  --text-color: black;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-color: #1a202c; /* Dark gray */
+  --text-color: white;
+}
+
+/* Apply theme colors */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
