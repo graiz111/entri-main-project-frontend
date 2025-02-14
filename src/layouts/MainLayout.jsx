@@ -14,7 +14,7 @@ const MainLayout = () => {
     <>
     <div className="flex flex-col min-h-screen ">
       <Header isOpen={isOpen} setIsOpen={setIsOpen} />
-      <main className="flex-grow mt-28" onClick={toggleDropdown}>
+      <main className="flex-grow mt-20" onClick={toggleDropdown}>
         <Outlet />
       </main>
       <Footer/>

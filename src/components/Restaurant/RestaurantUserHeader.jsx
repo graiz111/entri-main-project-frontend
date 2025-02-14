@@ -6,24 +6,21 @@ import logo from '../../assets/logo.png'
 import { ThemeContext } from "../../context/ThemeContext";
 import ThemeToggle from "../../context/ThemeToggle";
 import axios from 'axios';
-import { useRestaurantAuth } from "../../context/RestaurantAuthContext";
-import { axiosInstance } from '../../utils/axios';
 
 
 
-
-
-
-
-const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
-  const { restaurant, setRestaurant } = useRestaurantAuth();
+const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) => {
+  console.log(profilePic,_id,role,name,"userheader");
+  
+  
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
- 
+
   
-  const { theme } = useContext(ThemeContext);
+  
+  
  
 
 
@@ -80,13 +77,13 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent'
               }}>
-               "FOODIE BUDDIE"
+              {name ? `${name.toUpperCase()}` : "FOODIE BUDDIE"}
             </h1>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to={`/restaurant`}>
+            <NavLink to={`/restaurant?restaurant_id=${_id}`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                 theme === 'dark'   
                   ? 'hover:bg-gray-700 text-gray-200' 
@@ -106,7 +103,26 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
                 <span>Contact</span>
               </button>
             </NavLink>
-          
+            
+            {/* Search Bar */}
+            <div className="relative">
+              <div className={`flex items-center rounded-full px-4 py-2 ${
+                theme === 'dark'   
+                  ? 'bg-gray-700' 
+                  : 'bg-gray-100'
+              }`}>
+                <FiSearch className={theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className={`ml-2 bg-transparent outline-none text-sm w-64 ${
+                    theme === 'dark'   
+                      ? 'placeholder-gray-400 text-gray-200' 
+                      : 'placeholder-gray-500 text-gray-700'
+                  }`}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Right Section */}
@@ -116,7 +132,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
             {/* Profile Dropdown */}
             <div className="relative">
               <img
-                src= "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"
+                src={profilePic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
                 alt="Profile"
                 className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-colors ${
                   theme === 'dark'  
@@ -133,14 +149,38 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
                     : 'bg-white border-gray-100'
                 }`}>
                   
-                    <NavLink to="/restaurant/login?role=restaurant">  
-                      <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                        theme === 'dark'  
-                          ? 'text-gray-200 hover:bg-gray-700'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}>Login</div>
-                    </NavLink>
-                 
+                      <NavLink to={`orders`}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}>Orders</div>
+                      </NavLink>
+                      <NavLink to={`menu`}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}>Items</div>
+                      </NavLink>
+                      <NavLink to={`editprofile`}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}>
+                          EditProfile
+                        </div>
+                      </NavLink>
+
+                      <NavLink to={``}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`} >Logout</div>
+                      </NavLink>
+                  
                 </div>
               )}
             </div>
@@ -171,8 +211,18 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
                 ? 'bg-gray-700' 
                 : 'bg-gray-100'
             }`}>
+              <FiSearch className={theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className={`ml-2 bg-transparent outline-none text-sm w-full ${
+                  theme === 'dark'   
+                    ? 'placeholder-gray-400 text-gray-200' 
+                    : 'placeholder-gray-500 text-gray-700'
+                }`}
+              />
             </div>
-            <NavLink to="/restaurant">
+            <NavLink to="/restaurant/user">
               <div className={`px-4 py-2 text-sm rounded-lg ${
                 theme === 'dark'  
                   ? 'text-gray-200 hover:bg-gray-700'
@@ -194,5 +244,5 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
   );
 };
 
-export default RestaurantHeader;
+export default RestaurantUserHeader;
 

@@ -4,6 +4,7 @@ import { IoCart } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import logo from '../../assets/logo.png'
 import { useLocation } from "react-router-dom";
+import ThemeToggle from "../../context/ThemeToggle";
 
 
 
@@ -77,9 +78,9 @@ const DeliveryHeader = ({ isOpen, setIsOpen }) => {
       </div>
 
       <div className="flex items-center gap-4">
-       
 
-        <div className="relative">
+        <div className="relative  flex gap-10">
+       <ThemeToggle/>
           <div className="cursor-pointer" onClick={toggleDropdown}>
             <img
               src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"

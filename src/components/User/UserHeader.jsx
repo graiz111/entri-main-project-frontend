@@ -1,29 +1,25 @@
-import React, { useState, useRef, useEffect } from "react";
-import logo from "../../assets/logo.png";
-import { FiSearch, FiX } from "react-icons/fi";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { NavLink, useNavigate, useLocation, useParams } from "react-router-dom";
+import { FiSearch, FiX, FiHome, FiPhone, FiMenu } from "react-icons/fi";
 import { IoCart } from "react-icons/io5";
-import { useNavigate, NavLink,useLocation } from "react-router-dom";
+import { ThemeContext } from "../../context/ThemeContext";
+import ThemeToggle from "../../context/ThemeToggle";
+import logo from "../../assets/logo.png";
 
-const UserHeader = ({ isOpen, setIsOpen,profilepic }) => {
-  
+const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
   const [showSearch, setShowSearch] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchRef = useRef(null);
   const navigate = useNavigate();
-   const location = useLocation();
-     const searchParams = new URLSearchParams(location.search);
-     const user_id = searchParams.get("user_id");
-     console.log("userlayout",user_id);
-  
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const openCart = () => {
-    navigate(`/user/usercart?user_id=${user_id}`);
-  };
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Pacifico&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearch(false);
@@ -32,95 +28,154 @@ const UserHeader = ({ isOpen, setIsOpen,profilepic }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.head.removeChild(link);
     };
   }, []);
 
-  const toggleSearch = () => {
-    setShowSearch(!showSearch);
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const openCart = () => {
+    navigate(`usercart/${_id}`);
   };
 
   return (
-    <div className="bg-green-300 flex justify-around items-center p-4 fixed top-0 left-0 w-full z-50 shadow-lg" >
-      
-      <div className="flex items-center space-x-2 p-2">
-        <div className="w-10 h-10 sm:w-12 sm:h-12">
-          <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-        </div>
-        <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-white hidden sm:block">
-          <NavLink to="/user">Foodie Buddie</NavLink>
-        </h1>
-      </div>
-
-      <div className="flex items-center" onClick={toggleDropdown}>
-        {!showSearch ? (
-          <FiSearch
-            className="text-white h-6 w-6 cursor-pointer sm:hidden"
-            onClick={toggleSearch}
-          />
-        ) : (
-          <div ref={searchRef} className="absolute top-12 left-1/2 transform -translate-x-1/2 w-10/12 sm:w-auto">
-            <div className="flex items-center bg-white h-10 sm:h-12 rounded-full px-3 w-full">
-              <FiSearch className="text-gray-600 h-5 w-5" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="ml-2 outline-none border-none bg-transparent text-sm text-gray-700 w-full"
-              />
-              <FiX className="text-gray-600 h-5 w-5 cursor-pointer" onClick={toggleSearch} />
-            </div>
-          </div>
-        )}
-
-        <div className="hidden sm:flex items-center bg-white h-10 sm:h-12 rounded-full px-3 w-full max-w-xs sm:max-w-md md:max-w-lg">
-          <FiSearch className="text-gray-600 h-5 w-5" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="ml-2 outline-none border-none bg-transparent text-sm text-gray-700 w-full"
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-4">
-        
-        <div className="relative inline-block cursor-pointer" onClick={() => (openCart(),toggleDropdown)}>
-          <IoCart className="h-10 w-10" />
-          <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">0</div>
-        </div>
-
-        <div className="relative">
-          <div className="cursor-pointer" onClick={toggleDropdown}>
+    <div className={`${
+      theme === 'dark'   
+        ? 'bg-gray-800 border-gray-700 text-white' 
+        : 'bg-white border-gray-200 text-gray-800'
+    } border-b p-3 shadow-sm fixed top-0 left-0 w-full z-50`}>
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo and Brand Name */}
+          <div className="flex items-center space-x-4">
             <img
-              src={profilepic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
-              alt="Dropdown Trigger"
-              className="max-w-16 max-h-14 rounded-full border border-black p-1"
+              src={logo}
+              alt="Logo"
+              className="w-10 h-10 object-contain"
             />
+            <h1 className="text-lg sm:text-2xl md:text-3xl font-bold hidden md:block"
+              style={{
+                fontFamily: 'Pacifico, cursive',
+                background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+              <NavLink to="/user">Foodie Buddie</NavLink>
+            </h1>
           </div>
 
-          {isOpen && (
-            <div className="absolute right-0 mt-2 w-48 p-2 bg-green-100 border border-gray-300 rounded-lg shadow-lg">
-              <ul className="p-1 space-y-1">
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-green-200 rounded-full shadow-lg">
-                  <NavLink to={`/user/settings?user_id=${user_id}`}>Profile</NavLink>
-                </li>
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-orange-200 rounded-full shadow-lg">
-                  <NavLink to={`/user/orders?user_id=${user_id}`}>Orders</NavLink>
-                </li>
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-purple-200 rounded-full shadow-lg">
-                  <NavLink to={`/user/addaddress?user_id=${user_id}`}>Add Address</NavLink>
-                </li>
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-orange-200 rounded-full shadow-lg">
-                  <NavLink to="/user">Home</NavLink>
-                </li>
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-yellow-200 rounded-full shadow-lg">
-                  <NavLink to="/user/contact-us">Contact Us</NavLink>
-                </li>
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-red-200 rounded-full shadow-lg">
-                  <NavLink to="/">LogOut</NavLink>
-                </li>
-              </ul>
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-8">
+            <NavLink 
+              to="/user"
+              className={({ isActive }) => `flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${
+                isActive 
+                  ? 'text-purple-500' 
+                  : theme === 'dark'
+                    ? 'text-gray-300 hover:text-purple-400'
+                    : 'text-gray-700 hover:text-purple-500'
+              }`}
+            >
+              <FiHome className="w-4 h-4" />
+              <span>Home</span>
+            </NavLink>
+            
+            <NavLink 
+              to="/user/contact-us"
+              className={({ isActive }) => `flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${
+                isActive 
+                  ? 'text-purple-500' 
+                  : theme === 'dark'
+                    ? 'text-gray-300 hover:text-purple-400'
+                    : 'text-gray-700 hover:text-purple-500'
+              }`}
+            >
+              <FiPhone className="w-4 h-4" />
+              <span>Contact</span>
+            </NavLink>
+          </div>
+
+          {/* Right Section */}
+          <div className="flex items-center space-x-4">
+            {/* Cart Icon */}
+            <div className="relative cursor-pointer" onClick={openCart}>
+              <IoCart className={`h-6 w-6 ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              }`} />
+              <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                0
+              </div>
             </div>
-          )}
+
+            <ThemeToggle className="bg-white"/>
+
+            {/* Profile Dropdown */}
+            <div className="relative">
+              <img
+                src={profilepic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
+                alt="Profile"
+                className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-colors ${
+                  theme === 'dark'  
+                    ? 'border-gray-600 hover:border-gray-500'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                onClick={toggleDropdown}
+              />
+
+              {isOpen && (
+                <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
+                  theme === 'dark'  
+                    ? 'bg-gray-800 border-gray-700'
+                    : 'bg-white border-gray-100'
+                }`}>
+                  <NavLink to={`/user/settings?user_id=${_id}`}>
+                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark'  
+                        ? 'text-gray-200 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}>Profile</div>
+                  </NavLink>
+                  <NavLink to={`/user/orders?user_id=${_id}`}>
+                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark'  
+                        ? 'text-gray-200 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}>Orders</div>
+                  </NavLink>
+                  <NavLink to={`/user/addaddress?user_id=${_id}`}>
+                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark'  
+                        ? 'text-gray-200 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}>Add Address</div>
+                  </NavLink>
+                  <NavLink to="/user/contact-us">
+                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark'  
+                        ? 'text-gray-200 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}>Contact Us</div>
+                  </NavLink> 
+                  <NavLink to="/user/about-us">
+                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark'  
+                        ? 'text-gray-200 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}>About Us</div>
+                  </NavLink>
+                  <NavLink to="/">
+                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark'  
+                        ? 'text-gray-200 hover:bg-gray-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}>Logout</div>
+                  </NavLink>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

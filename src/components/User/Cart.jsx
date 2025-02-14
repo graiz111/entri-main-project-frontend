@@ -1,110 +1,257 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaTimes } from "react-icons/fa";
+import { ThemeContext } from "../../context/ThemeContext";
+import { axiosInstance } from "../../utils/axios";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = useState([]);
-  const [restaurantId, setRestaurantId] = useState(null); // Store restaurant ID of first item
+  const { userId } = useParams();
+  const { theme } = useContext(ThemeContext);
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Add item to cart (with restaurant check)
-  const addItemToCart = (item) => {
-    if (cart.length === 0) {
-      setRestaurantId(item.restaurant_id); // Set restaurant_id for the first item
-    } else if (item.restaurant_id !== restaurantId) {
-      alert("You can only add items from the same restaurant!");
-      return;
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get(`/user/cart/${userId}`);
+      setCart(response.data.data);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      setError("Failed to load cart items");
+      toast.error("Failed to load cart items");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
-      if (existingItem) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
+  useEffect(() => {
+    if (userId) {
+      fetchCart();
+    }
+  }, [userId]);
+  const addToCart = async (itemId) => {
+    try {
+      // First fetch restaurant ID
+      const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { 
+        itemId 
+      });
+
+      // if (!resResponse.data.success) {
+      //   toast.error("Failed to fetch restaurant information");
+      //   return;
+      // }
+
+      // Check if cart exists and has items from a different restaurant
+      if (cart && cart.items && cart.items.length > 0) {
+        if (cart.restaurant_id._id !== resResponse.data.restaurant_id) {
+          toast.error("Please add items from the same restaurant only");
+          return;
+        }
       }
-      return [...prevCart, { ...item, quantity: 1 }];
-    });
-  };
 
-  // Increase quantity
-  const increaseQuantity = (id) => {
-    setCart(cart.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
-  };
+      // Add item to cart
+      const cartResponse = await axiosInstance.post("user/additemtocart", {
+        user_id: userId,
+        restaurant_id: resResponse.data.restaurant_id,
+        item_id: itemId
+      });
 
-  // Decrease quantity
-  const decreaseQuantity = (id) => {
-    setCart(cart.map(item =>
-      item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-    ));
-  };
-
-  // Remove item
-  const removeItem = (id) => {
-    const updatedCart = cart.filter(item => item.id !== id);
-    setCart(updatedCart);
-
-    // If cart becomes empty, reset restaurantId
-    if (updatedCart.length === 0) {
-      setRestaurantId(null);
+      if (cartResponse.data.success) {
+        toast.success("Item added to cart!");
+        fetchCart(); // Refresh cart
+      } else {
+        toast.error(cartResponse.data.message || "Failed to add item to cart");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error( "items from same restaurant can oly add to cart  ");
     }
   };
 
-  // Calculate total price
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
+  // const addToCart = async (itemId) => {
+  //   try {
+  //     // First fetch restaurant ID
+  //     const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { 
+  //       itemId 
+  //     });
+
+  //     if (!resResponse.data.success) {
+  //       toast.error("Failed to fetch restaurant information");
+  //       return;
+  //     }
+
+  //     // Add item to cart
+  //     const cartResponse = await axiosInstance.post("user/additemtocart", {
+  //       user_id: userId,
+  //       restaurant_id: resResponse.data.restaurant_id,
+  //       item_id: itemId
+  //     });
+
+  //     if (cartResponse.data.success) {
+  //       toast.success("Item added to cart!");
+  //       fetchCart(); // Refresh cart
+  //     } else {
+  //       toast.error(cartResponse.data.message || "Failed to add item to cart");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding to cart:", error);
+  //     toast.error(error.response?.data?.message || "Failed to add item to cart");
+  //   }
+  // };
+
+  const updateQuantity = async (cartItemId, newQuantity) => {
+    try {
+      const response = await axiosInstance.put(`/cart/update/${cartItemId}`, {
+        userId,
+        quantity: newQuantity
+      });
+
+      if (response.data.success) {
+        fetchCart(); // Refresh cart
+      } else {
+        toast.error("Failed to update quantity");
+      }
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      toast.error("Failed to update quantity");
+    }
+  };
+
+  const removeItem = async (cartItemId) => {
+    try {
+      const response = await axiosInstance.delete(`/cart/${cartItemId}`, {
+        data: { userId }
+      });
+
+      if (response.data.success) {
+        fetchCart(); // Refresh cart
+        toast.success("Item removed from cart");
+      } else {
+        toast.error("Failed to remove item");
+      }
+    } catch (error) {
+      console.error("Error removing item:", error);
+      toast.error("Failed to remove item");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={`flex items-center justify-center min-h-screen ${
+        theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+      }`}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`flex items-center justify-center min-h-screen ${
+        theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+      }`}>
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4">
-      <div className="max-w-lg mx-auto bg-white p-4 rounded-xl shadow-md relative">
+    <div className={`p-4 ${
+      theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+    }`}>
+      <div className={`max-w-lg mx-auto ${
+        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+      } p-4 rounded-xl shadow-md relative`}>
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-4 right-4 text-gray-600 hover:text-red-500"
+          className={`absolute top-4 right-4 ${
+            theme === 'dark' ? 'text-gray-400 hover:text-red-400' : 'text-gray-600 hover:text-red-500'
+          }`}
         >
           <FaTimes size={24} />
         </button>
-        <h2 className="text-xl font-bold mb-4">CART</h2>
+        <h2 className="text-xl font-bold mb-4">Your Cart</h2>
 
-        {cart.length === 0 ? (
-          <p className="text-gray-500">Your cart is empty.</p>
+        {!cart || !cart.items || cart.items.length === 0 ? (
+          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+            Your cart is empty
+          </p>
         ) : (
-          <div className="space-y-4">
-            {cart.map((item) => (
-              <div key={item.id} className="flex items-center justify-between border-b pb-2">
-                <img src={item.image} alt={item.name} className="w-16 h-16 rounded-md" />
-                <div className="flex-1 ml-4">
-                  <h3 className="font-semibold">{item.name}</h3>
-                  <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
-                </div>
-                <div className="flex items-center">
-                  <button onClick={() => decreaseQuantity(item.id)} className="p-1 bg-gray-200 rounded-full">
-                    <FaMinus size={12} />
-                  </button>
-                  <span className="mx-2">{item.quantity}</span>
-                  <button onClick={() => increaseQuantity(item.id)} className="p-1 bg-gray-200 rounded-full">
-                    <FaPlus size={12} />
-                  </button>
-                </div>
-                <button onClick={() => removeItem(item.id)} className="text-red-500 ml-4">
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {cart.length > 0 && (
           <>
-            <div className="mt-4 text-right">
-              <p className="text-lg font-bold">Total: ${total}</p>
+            {cart.restaurant_id && (
+              <div className={`mb-4 p-2 rounded ${
+                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+              }`}>
+                <p className="text-sm">
+                  Ordering from: <span className="font-semibold">{cart.restaurant_id.name}</span>
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {cart.items.map((cartItem) => (
+                <div key={cartItem._id} className={`flex items-center justify-between border-b pb-2 ${
+                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                }`}>
+                  <img 
+                    src={cartItem.item.itemPic || 'https://via.placeholder.com/100'} 
+                    alt={cartItem.item.name} 
+                    className="w-16 h-16 rounded-md object-cover"
+                  />
+                  <div className="flex-1 ml-4">
+                    <h3 className="font-semibold">{cartItem.item.name}</h3>
+                    <p className={`text-sm ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      ${cartItem.item.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    <button 
+                      onClick={() => updateQuantity(cartItem._id, Math.max(1, cartItem.quantity - 1))}
+                      className={`p-1 rounded-full ${
+                        theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-200'
+                      }`}
+                    >
+                      <FaMinus size={12} />
+                    </button>
+                    <span className="mx-2">{cartItem.quantity}</span>
+                    <button 
+                      onClick={() => updateQuantity(cartItem._id, cartItem.quantity + 1)}
+                      className={`p-1 rounded-full ${
+                        theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-200'
+                      }`}
+                    >
+                      <FaPlus size={12} />
+                    </button>
+                  </div>
+                  <button 
+                    onClick={() => removeItem(cartItem._id)}
+                    className="text-red-500 ml-4 hover:text-red-600"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              ))}
             </div>
-            <button
-              onClick={() => alert("Proceeding to Payment...")}
-              className="w-full mt-4 bg-green-500 text-white py-2 rounded-lg font-semibold"
-            >
-              Proceed to Payment
-            </button>
+
+            <div className="mt-4 text-right">
+              <p className="text-lg font-bold">
+                Total: ${cart.totalPrice.toFixed(2)}
+              </p>
+            </div>
+
+            <div className="mt-4">
+              <button
+                onClick={() => navigate('/checkout')}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition-colors"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -113,109 +260,3 @@ const Cart = () => {
 };
 
 export default Cart;
-
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { FaPlus, FaMinus, FaTrash, FaTimes } from "react-icons/fa";
-
-// const Cart = () => {
-//   const navigate = useNavigate();
-//   const [cart, setCart] = useState([
-//     {
-//       id: 1,
-//       name: "Burger",
-//       price: 5.99,
-//       quantity: 1,
-//       restaurant: "McDonald's",
-//       image: "https://via.placeholder.com/100",
-//     },
-//     {
-//       id: 2,
-//       name: "Fries",
-//       price: 2.99,
-//       quantity: 1,
-//       restaurant: "McDonald's",
-//       image: "https://via.placeholder.com/100",
-//     },
-//   ]);
-
-//   // Calculate total price
-//   const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
-
-//   // Increase quantity
-//   const increaseQuantity = (id) => {
-//     setCart(cart.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
-//   };
-
-//   // Decrease quantity
-//   const decreaseQuantity = (id) => {
-//     setCart(cart.map(item =>
-//       item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-//     ));
-//   };
-
-//   // Remove item
-//   const removeItem = (id) => {
-//     setCart(cart.filter(item => item.id !== id));
-//   };
-
-//   return (
-//     <div className=" p-4 ">
-     
-//       <div className="max-w-lg mx-auto bg-white p-4 rounded-xl shadow-md relative">
-
-//         <button
-//             onClick={() => navigate(-1)}
-//             className="absolute top-4 right-4 text-gray-600 hover:text-red-500"
-//         >
-//             <FaTimes size={24} />
-//         </button>
-//         <h2 className="text-xl font-bold mb-4">CART</h2>
-
-//         {cart.length === 0 ? (
-//           <p className="text-gray-500">Your cart is empty.</p>
-//         ) : (
-//           <div className="space-y-4">
-//             {cart.map((item) => (
-//               <div key={item.id} className="flex items-center justify-between border-b pb-2">
-//                 <img src={item.image} alt={item.name} className="w-16 h-16 rounded-md" />
-//                 <div className="flex-1 ml-4">
-//                   <h3 className="font-semibold">{item.name}</h3>
-//                   <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
-//                 </div>
-//                 <div className="flex items-center">
-//                   <button onClick={() => decreaseQuantity(item.id)} className="p-1 bg-gray-200 rounded-full">
-//                     <FaMinus size={12} />
-//                   </button>
-//                   <span className="mx-2">{item.quantity}</span>
-//                   <button onClick={() => increaseQuantity(item.id)} className="p-1 bg-gray-200 rounded-full">
-//                     <FaPlus size={12} />
-//                   </button>
-//                 </div>
-//                 <button onClick={() => removeItem(item.id)} className="text-red-500 ml-4">
-//                   <FaTrash />
-//                 </button>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-
-//         {cart.length > 0 && (
-//           <>
-//             <div className="mt-4 text-right">
-//               <p className="text-lg font-bold">Total: ${total}</p>
-//             </div>
-//             <button
-//               onClick={() => alert("Proceeding to Payment...")}
-//               className="w-full mt-4 bg-green-500 text-white py-2 rounded-lg font-semibold"
-//             >
-//               Proceed to Payment
-//             </button>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Cart;

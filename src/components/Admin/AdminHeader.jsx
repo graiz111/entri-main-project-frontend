@@ -3,6 +3,7 @@ import { FiSearch, FiX } from "react-icons/fi";
 import { NavLink,useLocation } from "react-router-dom";
 import axios from 'axios'
 import logo from '../../assets/logo.png'
+import ThemeToggle from "../../context/ThemeToggle";
 
 
 const AdminHeader = ({ isOpen, setIsOpen }) => {
@@ -101,7 +102,8 @@ const AdminHeader = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative flex gap-10">
+        <ThemeToggle/>
         <div className="cursor-pointer" onClick={toggleDropdown}>
         <img
                 src={Profilepic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}

@@ -13,7 +13,7 @@ const AdminLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <AdminHeader isOpen={isOpen} setIsOpen={setIsOpen} />
-      <main className="flex-grow mt-28 " onClick={toggleDropdown}>
+      <main className="flex-grow mt-20 " onClick={toggleDropdown}>
         <Outlet />
       </main>
       <Footer />
