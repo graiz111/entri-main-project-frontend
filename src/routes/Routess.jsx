@@ -1,5 +1,6 @@
+
 import React,{useEffect,useState} from 'react';
-import axios from "axios";
+import { axiosInstance } from '../utils/axios';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 // Layouts
@@ -20,6 +21,7 @@ import SettingsPage from '../components/common/Setting';
 
 // Admin Components
 import AdminHome from '../components/Admin/AdminHome';
+import AdminUserHome from '../components/Admin/AdminUserHome';
 import AdminRestaurant from '../components/Admin/adminRestaurant';
 import AdminUsers from '../components/Admin/AdminUsers';
 import AdminDelivery from '../components/Admin/AdminDelivery';
@@ -42,23 +44,33 @@ import Cart from '../components/User/Cart';
 import UseresMenu from '../components/User/UserresMenu';
 import RestaurantUserLayout from '../layouts/RestaurantUserLayout';
 import RestaurantUserHome from '../components/Restaurant/RestaurantUserHome';
+import AdminUserLayout from '../layouts/AdminUserLayout';
+import CheckOut from '../components/common/CheckOut';
+import Success from '../components/common/Success';
+import Failure from '../components/common/Failure';
 
 
 
 
-
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const [auth, setAuth] = useState(null);
+
 
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/api/auth/verify-token", {
-          withCredentials: true,
-        });
+        const response = await axiosInstance.get("/auth/verify-token");
 
         if (response.data.success) {
-          setAuth(true);
+          const userRole = response.data.role; // Get role from API
+         
+
+          // Check if the role is allowed
+          if (allowedRoles.includes(userRole)) {
+            setAuth(true);
+          } else {
+            setAuth(false);
+          }
         } else {
           setAuth(false);
         }
@@ -68,7 +80,7 @@ const ProtectedRoute = ({ children }) => {
     };
 
     verifyToken();
-  }, []);
+  }, [allowedRoles]); // ✅ Add dependencies
 
   if (auth === null) {
     return (
@@ -83,6 +95,46 @@ const ProtectedRoute = ({ children }) => {
 
 
 
+
+// const ProtectedRoute = ({ children,allowedRoles }) => {
+//   const [auth, setAuth] = useState(null);
+//   const [Role, setRole] = useState('');
+
+//   useEffect(() => {
+//     const verifyToken = async () => {
+//       try {
+//         const response = await axios.get("http://localhost:5001/api/auth/verify-token", {
+//           withCredentials: true,
+//         });
+
+//         if (response.data.success===true) {
+//           setRole(allowedRoles)
+//           if(Role && response.data.role)
+//           setAuth(true);
+//         } else {
+//           setAuth(false);
+//         }
+//       } catch (error) {
+//         setAuth(false);
+//       }
+//     };
+
+//     verifyToken();
+//   }, []);
+
+//   if (auth === null) {
+//     return (
+//       <div className="flex items-center justify-center min-h-screen">
+//         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+//       </div>
+//     );
+//   }
+
+//   return auth ? children : <Navigate to="/" />;
+// };
+
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -93,6 +145,8 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
       { path: "about-us", element: <AboutUs /> },
+      { path: "/user/:userId/user/payment/success", element: <Success /> },
+      { path: "user/payment/cancel", element: <Failure /> },
     ],
   },
   {
@@ -101,10 +155,13 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <ProtectedRoute allowedRoles={["user"]}><UserHome /></ProtectedRoute> },
       { path: "orders", element: <ProtectedRoute allowedRoles={["user"]}><UserOrders /></ProtectedRoute> },
+      { path: "userhome", element: <ProtectedRoute allowedRoles={["user"]}><UserHome /></ProtectedRoute> },
       { path: "userresmenu/:restaurant_id", element: <ProtectedRoute allowedRoles={["user"]}><UseresMenu/></ProtectedRoute> },
       { path: "usercart/:userId", element: <ProtectedRoute allowedRoles={["user"]}><Cart /></ProtectedRoute> },
       { path: "addaddress", element: <ProtectedRoute allowedRoles={["user"]}><UserAddress /></ProtectedRoute> },
       { path: "editprofile", element: <ProtectedRoute allowedRoles={["user"]}><EditProfile /></ProtectedRoute> },
+      { path: "checkout/:userId", element: <ProtectedRoute allowedRoles={["user"]}><CheckOut /></ProtectedRoute> },
+    
       { path: "contact-us", element: <ContactUs /> },
       { path: "about-us", element: <AboutUs /> },
     ],
@@ -115,14 +172,22 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminHome /> },
       { path: "login", element: <Login /> },
-    { path: "signup", element: <Signup /> },
-      { path: "admrestaurant", element: <ProtectedRoute allowedRoles={["admin"]}><AdminRestaurant /></ProtectedRoute> },
-      { path: "admusers", element: <ProtectedRoute allowedRoles={["admin"]}><AdminUsers /></ProtectedRoute> },
-      { path: "admdelivery", element: <ProtectedRoute allowedRoles={["admin"]}><AdminDelivery /></ProtectedRoute> },
-      { path: "admdedit", element: <ProtectedRoute allowedRoles={["admin"]}><AdminEdit /></ProtectedRoute> },
-      { path: "settings", element: <ProtectedRoute allowedRoles={["admin"]}><SettingsPage /></ProtectedRoute> },
-      { path: "editprofile", element: <ProtectedRoute allowedRoles={["admin"]}><EditProfile /></ProtectedRoute> },
-      { path: "about-us", element: <AboutUs /> },
+      { path: "signup", element: <Signup /> },
+      {
+        path:"user/:_id/:role",
+        element: <ProtectedRoute allowedRoles={["admin"]}><AdminUserLayout/></ProtectedRoute>, 
+        children:[
+          {index:true,element:<AdminUserHome/>},
+          { path: "admrestaurant", element: <AdminRestaurant />},
+          { path: "admusers", element: <AdminUsers />},
+          { path: "admdelivery", element: <AdminDelivery />},
+          { path: "admdedit", element: <AdminEdit />},
+          { path: "editprofile", element: <EditProfile />},
+          { path: "about-us", element: <AboutUs /> },
+        ],
+
+      }
+
     ],
   },
   {
@@ -149,27 +214,8 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  }
-  
-  
-  
-  
-  ,
-  
-  // {
-  //   path: "/restaurant",
-  //   element: <RestaurantLayout />, // ✅ Always accessible
-  //   children: [
-  //     { index: true, element:<RestaurantHome />},
-  //     { path: "login", element: <Login /> },
-  //   { path: "signup", element: <Signup /> },
-  //     { path: "menu", element: <ProtectedRoute allowedRoles={["restaurant"]}><RestaurantMenu /></ProtectedRoute> },
-  //     { path: "orders", element: <ProtectedRoute allowedRoles={["restaurant"]}><RestaurantOrders /></ProtectedRoute> },
-  //     { path: "settings", element: <ProtectedRoute allowedRoles={["restaurant"]}><SettingsPage /></ProtectedRoute> },
-  //     { path: "editprofile", element: <ProtectedRoute allowedRoles={["restaurant"]}><EditProfile /></ProtectedRoute> },
-  //     { path: "about-us", element: <AboutUs /> },
-  //   ],
-  // },
+  },
+
   {
     path: "/delivery",
     element: <DeliveryLayout />, // ✅ Always accessible

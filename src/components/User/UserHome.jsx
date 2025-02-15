@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 
 import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import { ThemeContext } from "../../context/ThemeContext";
 import { FiClock, FiStar, FiSearch, FiShoppingCart } from 'react-icons/fi';
 
@@ -67,7 +68,7 @@ const UserHome = () => {
                 console.log("Post Data for Cart:", postData);
     
                 // Add item to cart
-                const cartResponse = await axiosInstance.post("user/additemtocart", postData);
+                const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
     
                 if (cartResponse.data.success === true) {
                     toast.success("Item added to cart!");
@@ -81,7 +82,7 @@ const UserHome = () => {
     
         } catch (error) {
             console.error("Error in addToCart:", error);
-            toast.error("add item from same restaurant");
+            toast.error("error happeed in cart add");
         }
     };
     

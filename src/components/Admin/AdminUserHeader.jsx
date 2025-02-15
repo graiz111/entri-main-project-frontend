@@ -14,7 +14,7 @@ import { ThemeContext } from '../../context/ThemeContext';
 import ThemeToggle from '../../context/ThemeToggle';
 import logo from '../../assets/logo.png';
 
-const AdminHeader = ({ isOpen,setIsOpen}) => {
+const AdminUserHeader = ({ isOpen,setIsOpen,profilePic, _id, role, name }) => {
   
   const [showSearch, setShowSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -69,7 +69,16 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-           
+            <NavLink to="/admin">
+              <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                theme === 'dark'   
+                  ? 'hover:bg-gray-700 text-gray-200' 
+                  : 'hover:bg-gray-100 text-gray-700'
+              }`}>
+                <Home className="h-4 w-4" />
+                <span>Dashboard</span>
+              </button>
+            </NavLink>
 
             {/* Search Bar */}
             <div className="relative">
@@ -99,7 +108,7 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
             {/* Profile Dropdown */}
             <div className="relative">
               <img
-                src={"https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
+                src={profilePic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
                 alt="Profile"
                 className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-colors ${
                   theme === 'dark'  
@@ -122,7 +131,7 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}>
                       <Users className="h-4 w-4 mr-2" />
-                      Login
+                      Add Coupons
                     </div>
                   </NavLink>
                 
@@ -132,7 +141,7 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}>
                     <LogOut className="h-4 w-4 mr-2" />
-                   signup
+                    Logout
                   </div>
                 </div>
               )}
@@ -164,9 +173,24 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
                 ? 'bg-gray-700' 
                 : 'bg-gray-100'
             }`}>
-             
+              <Search className={theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className={`ml-2 bg-transparent outline-none text-sm w-full ${
+                  theme === 'dark'   
+                    ? 'placeholder-gray-400 text-gray-200' 
+                    : 'placeholder-gray-500 text-gray-700'
+                }`}
+              />
             </div>
-        
+            <NavLink to="/admin">
+              <div className={`px-4 py-2 text-sm rounded-lg ${
+                theme === 'dark'  
+                  ? 'text-gray-200 hover:bg-gray-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}>Dashboard</div>
+            </NavLink>
           </div>
         </div>
       )}
@@ -174,7 +198,7 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
   );
 };
 
-export default AdminHeader;
+export default AdminUserHeader;
 // import React, { useState, useRef, useEffect, useContext } from "react";
 // import { FiSearch, FiX, FiMenu } from "react-icons/fi";
 // import { NavLink, useLocation } from "react-router-dom";

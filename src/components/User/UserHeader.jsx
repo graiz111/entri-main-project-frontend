@@ -62,14 +62,14 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent'
               }}>
-              <NavLink to="/user">Foodie Buddie</NavLink>
+              <NavLink to={`/`}>Foodie Buddie</NavLink>
             </h1>
           </div>
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <NavLink 
-              to="/user"
+              to={`userhome`}
               className={({ isActive }) => `flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'text-purple-500' 
@@ -83,7 +83,7 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
             </NavLink>
             
             <NavLink 
-              to="/user/contact-us"
+              to="contact-us"
               className={({ isActive }) => `flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'text-purple-500' 
@@ -130,35 +130,35 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
                     ? 'bg-gray-800 border-gray-700'
                     : 'bg-white border-gray-100'
                 }`}>
-                  <NavLink to={`/user/settings?user_id=${_id}`}>
+                  <NavLink to={`editprofile`}>
                     <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                       theme === 'dark'  
                         ? 'text-gray-200 hover:bg-gray-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}>Profile</div>
                   </NavLink>
-                  <NavLink to={`/user/orders?user_id=${_id}`}>
+                  <NavLink to={`orders?user_id=${_id}`}>
                     <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                       theme === 'dark'  
                         ? 'text-gray-200 hover:bg-gray-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}>Orders</div>
                   </NavLink>
-                  <NavLink to={`/user/addaddress?user_id=${_id}`}>
+                  <NavLink to={`addaddress?user_id=${_id}`}>
                     <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                       theme === 'dark'  
                         ? 'text-gray-200 hover:bg-gray-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}>Add Address</div>
                   </NavLink>
-                  <NavLink to="/user/contact-us">
+                  <NavLink to="contact-us">
                     <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                       theme === 'dark'  
                         ? 'text-gray-200 hover:bg-gray-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}>Contact Us</div>
                   </NavLink> 
-                  <NavLink to="/user/about-us">
+                  <NavLink to="about-us">
                     <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                       theme === 'dark'  
                         ? 'text-gray-200 hover:bg-gray-700'

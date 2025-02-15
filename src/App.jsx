@@ -9,8 +9,7 @@ function App() {
     <ThemeProvider>
       <>
         <Routess />
-
-        {/* ✅ Ensure ToastContainer is placed inside the ThemeProvider */}
+{/* 
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -20,7 +19,7 @@ function App() {
           pauseOnHover
           draggable
           theme="light"
-        />
+        /> */}
       </>
     </ThemeProvider>
   );

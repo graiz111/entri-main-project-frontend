@@ -12,6 +12,7 @@ import axios from 'axios';
 const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) => {
   console.log(profilePic,_id,role,name,"userheader");
   
+ const { theme } = useContext(ThemeContext);
   
   const searchRef = useRef(null);
   const navigate = useNavigate();

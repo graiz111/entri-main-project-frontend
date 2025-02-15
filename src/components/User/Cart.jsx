@@ -1,13 +1,14 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaTimes } from "react-icons/fa";
 import { ThemeContext } from "../../context/ThemeContext";
 import { axiosInstance } from "../../utils/axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const Cart = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
+  const [cartId, setcartid] = useState(null)
   const { theme } = useContext(ThemeContext);
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,8 +17,11 @@ const Cart = () => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/user/cart/${userId}`);
+      const response = await axiosInstance.get(`/cart/cart/${userId}`);
       setCart(response.data.data);
+      setcartid(response.data.data._id)
+      
+      
     } catch (error) {
       console.error("Error fetching cart:", error);
       setError("Failed to load cart items");
@@ -32,44 +36,44 @@ const Cart = () => {
       fetchCart();
     }
   }, [userId]);
-  const addToCart = async (itemId) => {
-    try {
-      // First fetch restaurant ID
-      const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { 
-        itemId 
-      });
+  // const addToCart = async (itemId) => {
+  //   try {
+  //     // First fetch restaurant ID
+  //     const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { 
+  //       itemId 
+  //     });
 
-      // if (!resResponse.data.success) {
-      //   toast.error("Failed to fetch restaurant information");
-      //   return;
-      // }
+  //     // if (!resResponse.data.success) {
+  //     //   toast.error("Failed to fetch restaurant information");
+  //     //   return;
+  //     // }
 
-      // Check if cart exists and has items from a different restaurant
-      if (cart && cart.items && cart.items.length > 0) {
-        if (cart.restaurant_id._id !== resResponse.data.restaurant_id) {
-          toast.error("Please add items from the same restaurant only");
-          return;
-        }
-      }
+  //     // Check if cart exists and has items from a different restaurant
+  //     if (cart && cart.items && cart.items.length > 0) {
+  //       if (cart.restaurant_id._id !== resResponse.data.restaurant_id) {
+  //         toast.error("Please add items from the same restaurant only");
+  //         return;
+  //       }
+  //     }
 
-      // Add item to cart
-      const cartResponse = await axiosInstance.post("user/additemtocart", {
-        user_id: userId,
-        restaurant_id: resResponse.data.restaurant_id,
-        item_id: itemId
-      });
+  //     // Add item to cart
+  //     const cartResponse = await axiosInstance.post("cart/additemtocart", {
+  //       user_id: userId,
+  //       restaurant_id: resResponse.data.restaurant_id,
+  //       item_id: itemId
+  //     });
 
-      if (cartResponse.data.success) {
-        toast.success("Item added to cart!");
-        fetchCart(); // Refresh cart
-      } else {
-        toast.error(cartResponse.data.message || "Failed to add item to cart");
-      }
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      toast.error( "items from same restaurant can oly add to cart  ");
-    }
-  };
+  //     if (cartResponse.data.success) {
+  //       toast.success("Item added to cart!");
+  //       fetchCart(); // Refresh cart
+  //     } else {
+  //       toast.error(cartResponse.data.message || "Failed to add item to cart");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding to cart:", error);
+  //     toast.error( "items from same restaurant can oly add to cart  ");
+  //   }
+  // };
 
   // const addToCart = async (itemId) => {
   //   try {
@@ -102,11 +106,11 @@ const Cart = () => {
   //   }
   // };
 
-  const updateQuantity = async (cartItemId, newQuantity) => {
+  const updateQuantity = async (cartItemId,newquantity) => {
     try {
       const response = await axiosInstance.put(`/cart/update/${cartItemId}`, {
         userId,
-        quantity: newQuantity
+        quantity: newquantity
       });
 
       if (response.data.success) {
@@ -122,7 +126,7 @@ const Cart = () => {
 
   const removeItem = async (cartItemId) => {
     try {
-      const response = await axiosInstance.delete(`/cart/${cartItemId}`, {
+      const response = await axiosInstance.delete(`/cart/delete/${cartItemId}`, {
         data: { userId }
       });
 
@@ -206,7 +210,7 @@ const Cart = () => {
                     <p className={`text-sm ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
-                      ${cartItem.item.price.toFixed(2)}
+                      Rs.{cartItem.item.price.toFixed(2)}
                     </p>
                   </div>
                   <div className="flex items-center">
@@ -240,21 +244,24 @@ const Cart = () => {
 
             <div className="mt-4 text-right">
               <p className="text-lg font-bold">
-                Total: ${cart.totalPrice.toFixed(2)}
+                Total: Rs.{cart.totalPrice.toFixed(2)}
               </p>
             </div>
 
             <div className="mt-4">
-              <button
-                onClick={() => navigate('/checkout')}
+             <NavLink to={`/user/${userId}/user/checkout/${userId}`}>
+             <button
+               
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition-colors"
               >
                 Proceed to Checkout
               </button>
+             </NavLink>
             </div>
           </>
         )}
       </div>
+      <ToastContainer/>
     </div>
   );
 };
