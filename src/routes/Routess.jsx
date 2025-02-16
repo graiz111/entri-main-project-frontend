@@ -48,6 +48,8 @@ import AdminUserLayout from '../layouts/AdminUserLayout';
 import CheckOut from '../components/common/CheckOut';
 import Success from '../components/common/Success';
 import Failure from '../components/common/Failure';
+import DeliveryUserLayout from '../layouts/DeliveryUserLayout';
+import DeliveryUserHome from '../components/Delivery/DeliveryUserHome';
 
 
 
@@ -223,10 +225,19 @@ const router = createBrowserRouter([
       { index: true, element:<DeliveryHome />},
       { path: "login", element: <Login /> },
     { path: "signup", element: <Signup /> },
-      { path: "delorders", element: <ProtectedRoute allowedRoles={["delivery"]}><DeliveryOrders /></ProtectedRoute> },
-      { path: "settings", element: <ProtectedRoute allowedRoles={["delivery"]}><SettingsPage /></ProtectedRoute> },
-      { path: "editprofile", element: <ProtectedRoute allowedRoles={["delivery"]}><EditProfile /></ProtectedRoute> },
-      { path: "about-us", element: <AboutUs /> },
+    {
+      path: "user/:_id/:role",
+      element: <ProtectedRoute allowedRoles={["delivery"]}><DeliveryUserLayout/></ProtectedRoute>,
+      children:[
+        { index: true, element: <DeliveryUserHome /> },
+        { path: "orders", element: <DeliveryOrders />},
+        { path: "settings", element:<SettingsPage />},
+        { path: "editprofile", element: <EditProfile /> },
+        { path: "about-us", element: <AboutUs /> },
+      ]
+    }
+
+
     ],
   },
 ]);

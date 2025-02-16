@@ -115,25 +115,28 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
                     ? 'bg-gray-800 border-gray-700'
                     : 'bg-white border-gray-100'
                 }`}>
-                  <NavLink to="/admin/coupons">
+                  <NavLink to="/admin/signup?role=admin">
                     <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
                       theme === 'dark'  
                         ? 'text-gray-200 hover:bg-gray-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}>
                       <Users className="h-4 w-4 mr-2" />
-                      Login
+                      signUp
                     </div>
                   </NavLink>
                 
-                  <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 cursor-pointer ${
+                <NavLink  to="/admin/login?role=admin">
+                <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 cursor-pointer ${
                     theme === 'dark'  
                       ? 'text-gray-200 hover:bg-gray-700'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                   signup
+                    <Users className="h-4 w-4 mr-2" />
+                    Login
+                   
                   </div>
+                </NavLink>
                 </div>
               )}
             </div>

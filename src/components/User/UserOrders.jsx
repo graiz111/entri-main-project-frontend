@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState, useContext } from 'react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { axiosInstance } from '../../utils/axios';
+import io from 'socket.io-client';
 import { 
   ShoppingBag, 
   Clock, 
@@ -9,6 +11,9 @@ import {
   RefreshCw,
   XCircle
 } from 'lucide-react';
+
+// Initialize socket connection
+const socket = io(import.meta.env.VITE_BASE_URL);
 
 const UserOrders = () => {
   const { theme } = useContext(ThemeContext);
@@ -44,6 +49,20 @@ const UserOrders = () => {
     if (userId) {
       fetchOrders();
     }
+
+    // Set up socket.io listener for real-time order updates
+    socket.on('orderStatusUpdated', (updatedOrder) => {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        )
+      );
+    });
+
+    // Clean up socket connection on component unmount
+    return () => {
+      socket.off('orderStatusUpdated');
+    };
   }, [userId]);
 
   // Safely filter orders, ensuring orders is an array
@@ -363,9 +382,16 @@ const UserOrders = () => {
 
 export default UserOrders;
 // import React, { useEffect, useState, useContext } from 'react';
-// import axios from 'axios';
-// import { ThemeContext } from '../../context/ThemeContext'; // Adjust the import path as needed
+// import { ThemeContext } from '../../context/ThemeContext';
 // import { axiosInstance } from '../../utils/axios';
+// import { 
+//   ShoppingBag, 
+//   Clock, 
+//   CreditCard, 
+//   AlertCircle,
+//   RefreshCw,
+//   XCircle
+// } from 'lucide-react';
 
 // const UserOrders = () => {
 //   const { theme } = useContext(ThemeContext);
@@ -374,19 +400,17 @@ export default UserOrders;
 //   const [error, setError] = useState(null);
 //   const params = new URLSearchParams(window.location.search);
 //   const userId = params.get('user_id');
-//   console.log(userId, "indorder");
-
+  
 //   useEffect(() => {
 //     const fetchOrders = async () => {
 //       try {
 //         setLoading(true);
-
-//         // Fetch orders for the user
+        
 //         const response = await axiosInstance.get(`/user/orders/${userId}`);
-
+        
 //         // Ensure we're getting an array of orders
 //         const ordersData = response.data.orders || response.data || [];
-
+        
 //         // Check if ordersData is an array, if not convert it to an array if possible
 //         setOrders(Array.isArray(ordersData) ? ordersData : Object.values(ordersData));
 //         setError(null);
@@ -400,32 +424,33 @@ export default UserOrders;
 //       }
 //     };
 
-//     fetchOrders();
+//     if (userId) {
+//       fetchOrders();
+//     }
 //   }, [userId]);
 
 //   // Safely filter orders, ensuring orders is an array
-//   const activeOrders = Array.isArray(orders)
-//     ? orders.filter(
-//         (order) =>
-//           order.status === 'Placed' ||
-//           order.status === 'Preparing' ||
-//           order.status === 'Out for Delivery'
+//   const activeOrders = Array.isArray(orders) 
+//     ? orders.filter(order => 
+//         order.status === 'Placed' || 
+//         order.status === 'Preparing' || 
+//         order.status === 'Out for Delivery'
 //       )
 //     : [];
-
+  
 //   const completedOrders = Array.isArray(orders)
-//     ? orders.filter((order) => order.status === 'Delivered')
+//     ? orders.filter(order => order.status === 'Delivered')
 //     : [];
 
 //   // Handle canceling an order
 //   const handleCancelOrder = async (orderId) => {
 //     try {
 //       // Send cancel request to the backend
-//       await axios.post(`/api/orders/${orderId}/cancel`);
+//       await axiosInstance.post(`/orders/${orderId}/cancel`);
 
-//       // Update the local state - either refetch or update the status
+//       // Update the local state
 //       setOrders(
-//         orders.map((order) =>
+//         orders.map(order => 
 //           order._id === orderId ? { ...order, status: 'Cancelled' } : order
 //         )
 //       );
@@ -438,192 +463,281 @@ export default UserOrders;
 //     }
 //   };
 
+//   // Helper function to safely get nested object property
+//   const getNested = (obj, path, fallback = '') => {
+//     try {
+//       return path.split('.').reduce((o, key) => (o && o[key] !== undefined) ? o[key] : null, obj) || fallback;
+//     } catch (e) {
+//       return fallback;
+//     }
+//   };
+
+//   // Get appropriate status badge
+//   const StatusBadge = ({ status }) => {
+//     const getStatusConfig = (status) => {
+//       switch (status) {
+//         case 'Placed':
+//           return {
+//             color: theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800',
+//             icon: <Clock size={16} className="mr-1" />
+//           };
+//         case 'Preparing':
+//           return {
+//             color: theme === 'dark' ? 'bg-yellow-900 text-yellow-300' : 'bg-yellow-100 text-yellow-800',
+//             icon: <ShoppingBag size={16} className="mr-1" />
+//           };
+//         case 'Out for Delivery':
+//           return {
+//             color: theme === 'dark' ? 'bg-orange-900 text-orange-300' : 'bg-orange-100 text-orange-800',
+//             icon: <ShoppingBag size={16} className="mr-1" />
+//           };
+//         case 'Delivered':
+//           return {
+//             color: theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800',
+//             icon: <ShoppingBag size={16} className="mr-1" />
+//           };
+//         case 'Cancelled':
+//           return {
+//             color: theme === 'dark' ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800',
+//             icon: <XCircle size={16} className="mr-1" />
+//           };
+//         default:
+//           return {
+//             color: theme === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-800',
+//             icon: <ShoppingBag size={16} className="mr-1" />
+//           };
+//       }
+//     };
+
+//     const { color, icon } = getStatusConfig(status);
+
+//     return (
+//       <span className={`flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}>
+//         {icon}
+//         {status}
+//       </span>
+//     );
+//   };
+
 //   // Render order item
 //   const renderOrderItem = (order, canCancel = false) => {
 //     return (
 //       <li
 //         key={order._id}
-//         className={`mb-4 p-4 border rounded-lg shadow-sm hover:shadow-md transition ${
-//           theme === 'dark' ? 'bg-gray-800 text-white border-gray-700' : 'bg-white border-gray-200'
+//         className={`mb-6 rounded-xl overflow-hidden transition transform hover:translate-y-[-2px] ${
+//           theme === 'dark' 
+//             ? 'bg-gray-800 shadow-[0_4px_12px_rgba(0,0,0,0.3)]' 
+//             : 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)]'
 //         }`}
 //       >
-//         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-//           <div className="flex-grow">
-//             <h3 className="font-semibold text-lg">
-//               {order.restaurant_id?.name || 'Restaurant Name Not Available'}
-//             </h3>
-//             <div className="mt-2 space-y-1">
-//               <p className="text-sm">
-//                 <span className="font-medium">Status:</span>
-//                 <span className={`ml-1 ${getStatusColor(order.status)}`}>{order.status}</span>
-//               </p>
-//               <p className="text-sm">
-//                 <span className="font-medium">Ordered:</span>{' '}
-//                 {new Date(order.createdAt).toLocaleString()}
-//               </p>
-//               <p className="text-sm">
-//                 <span className="font-medium">Total:</span> Rs-{order.totalPrice?.toFixed(2)}
-//               </p>
-//               <p className="text-sm">
-//                 <span className="font-medium">Payment:</span> {order.paymentMethod}
-//               </p> 
-//               {order.address && (
-//                 <p className="text-sm">
-//                   <span className="font-medium">Address:</span> {order.address}
-//                 </p>
-//               )}
-//             </div>
+//         <div className="p-5">
+//           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+//             <div className="flex-grow space-y-4">
+//               <div className="flex justify-between items-start">
+//                 <h3 className="font-semibold text-lg">
+//                   {getNested(order, 'restaurant_id.name', 'Restaurant Name Not Available')}
+//                 </h3>
+//                 <StatusBadge status={order.status} />
+//               </div>
+              
+//               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+//                 <div className="flex items-center text-sm">
+//                   <Clock size={16} className={`mr-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
+//                   <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+//                     {new Date(order.createdAt).toLocaleString(undefined, {
+//                       month: 'short',
+//                       day: 'numeric',
+//                       year: 'numeric',
+//                       hour: '2-digit',
+//                       minute: '2-digit'
+//                     })}
+//                   </span>
+//                 </div>
+                
+//                 <div className="flex items-center text-sm">
+//                   <CreditCard size={16} className={`mr-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
+//                   <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+//                     {order.paymentMethod || 'Not specified'}
+//                   </span>
+//                 </div>
+//               </div>
 
-//             <div className="mt-3">
-//               <p className="text-sm font-medium">Items:</p>
-//               <ul
-//                 className={`pl-4 text-sm list-disc ${
-//                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-//                 }`}
-//               >
-//                 {order.items && Array.isArray(order.items) ? (
-//                   order.items.map((item, index) => (
-//                     <li key={index}>
-//                       {item.item_id?.name || 'Item Name Not Available'} × {item.quantity} (Rs-
-//                       {item.price.toFixed(2)})
-//                     </li>
-//                   ))
-//                 ) : (
-//                   <li>Order details not available</li>
-//                 )}
-//               </ul>
+//               <div>
+//                 <p className={`text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
+//                   Order Items:
+//                 </p>
+//                 <ul className={`pl-0 text-sm space-y-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+//                   {order.items && Array.isArray(order.items) ? (
+//                     order.items.map((item, index) => (
+//                       <li key={index} className="flex justify-between">
+//                         <span>
+//                           {getNested(item, 'item_id.name') || item.name || 'Item Name Not Available'} × {item.quantity || 1}
+//                         </span>
+//                         <span className="font-medium">
+//                           Rs-{(item.price || 0).toFixed(2)}
+//                         </span>
+//                       </li>
+//                     ))
+//                   ) : (
+//                     <li>Order details not available</li>
+//                   )}
+//                 </ul>
+//               </div>
 //             </div>
 //           </div>
-
-//           {canCancel && (
-//             <div className="md:text-right">
+          
+//           <div className={`mt-4 pt-4 border-t flex flex-wrap justify-between items-center ${
+//             theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+//           }`}>
+//             <div className="font-medium">
+//               <span className="text-sm mr-1">Total:</span>
+//               <span className="text-lg">
+//                 Rs-{(order.totalPrice || order.total || 0).toFixed(2)}
+//               </span>
+//             </div>
+            
+//             {canCancel && (
 //               <button
 //                 onClick={() => handleCancelOrder(order._id)}
-//                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition text-sm"
+//                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm flex items-center"
 //               >
+//                 <XCircle size={16} className="mr-1" />
 //                 Cancel Order
 //               </button>
-//             </div>
-//           )}
+//             )}
+//           </div>
 //         </div>
 //       </li>
 //     );
 //   };
 
-//   // Helper function to get status color
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case 'Placed':
-//         return theme === 'dark' ? 'text-blue-400' : 'text-blue-600';
-//       case 'Preparing':
-//         return theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600';
-//       case 'Out for Delivery':
-//         return theme === 'dark' ? 'text-orange-400' : 'text-orange-600';
-//       case 'Delivered':
-//         return theme === 'dark' ? 'text-green-400' : 'text-green-600';
-//       case 'Cancelled':
-//         return theme === 'dark' ? 'text-red-400' : 'text-red-600';
-//       default:
-//         return theme === 'dark' ? 'text-gray-400' : 'text-gray-600';
-//     }
-//   };
-
 //   if (loading) {
 //     return (
-//       <div
-//         className={`max-w-4xl mx-auto py-6 px-4 text-center ${
-//           theme === 'dark' ? 'text-white' : 'text-gray-800'
-//         }`}
-//       >
-//         <p>Loading your orders...</p>
+//       <div className={`max-w-4xl mx-auto py-12 px-4 text-center ${
+//         theme === 'dark' ? 'text-white' : 'text-gray-800'
+//       }`}>
+//         <div className="animate-spin mb-4 mx-auto">
+//           <RefreshCw size={32} />
+//         </div>
+//         <p className="text-lg">Loading your orders...</p>
 //       </div>
 //     );
 //   }
 
 //   if (error) {
 //     return (
-//       <div
-//         className={`max-w-4xl mx-auto py-6 px-4 text-center ${
-//           theme === 'dark' ? 'text-red-400 bg-gray-900' : 'text-red-600 bg-white'
-//         } rounded-lg shadow-lg p-6`}
-//       >
-//         <p>{error}</p>
-//         <button
-//           onClick={() => window.location.reload()}
-//           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-//         >
-//           Try Again
-//         </button>
+//       <div className={`max-w-4xl mx-auto py-12 px-4 ${
+//         theme === 'dark' ? 'text-white' : 'text-gray-800'
+//       }`}>
+//         <div className={`rounded-xl shadow-lg p-8 text-center ${
+//           theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+//         }`}>
+//           <AlertCircle size={48} className={`mb-4 mx-auto ${
+//             theme === 'dark' ? 'text-red-400' : 'text-red-500'
+//           }`} />
+//           <h2 className="text-xl font-semibold mb-2">Unable to Load Orders</h2>
+//           <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{error}</p>
+//           <button
+//             onClick={() => window.location.reload()}
+//             className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition flex items-center mx-auto"
+//           >
+//             <RefreshCw size={16} className="mr-2" />
+//             Try Again
+//           </button>
+//         </div>
 //       </div>
 //     );
 //   }
 
 //   return (
-//     <div
-//       className={`max-w-4xl mx-auto py-6 px-4 ${
-//         theme === 'dark' ? 'text-white bg-gray-900' : 'text-gray-800 bg-gray-50'
-//       }`}
-//     >
-//       <div
-//         className={`${
-//           theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-//         } shadow-lg rounded-lg p-4 sm:p-6 mb-8 border`}
-//       >
-//         <h2 className="text-xl sm:text-2xl font-bold text-center mb-6">Your Orders</h2>
-
-//         {/* Active Orders Section */}
-//         <div className="mb-8">
-//           <h3
-//             className={`text-lg sm:text-xl font-semibold mb-4 border-b pb-2 ${
-//               theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-//             }`}
-//           >
-//             Active Orders
-//           </h3>
-//           {activeOrders.length === 0 ? (
-//             <p
-//               className={`${
-//                 theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-//               } text-center py-4`}
-//             >
-//               No active orders
-//             </p>
-//           ) : (
-//             <ul className="space-y-4">
-//               {activeOrders.map((order) => {
-//                 const orderTime = new Date(order.createdAt);
-//                 const currentTime = new Date();
-//                 const timeDifference = Math.floor((currentTime - orderTime) / 1000);
-//                 const canCancel = timeDifference <= 60 && order.status === 'Placed';
-
-//                 return renderOrderItem(order, canCancel);
-//               })}
-//             </ul>
-//           )}
+//     <div className={`max-w-5xl mx-auto py-8 px-4 sm:px-6 ${
+//       theme === 'dark' ? 'text-white' : 'text-gray-800'
+//     }`}>
+//       <div className={`rounded-xl overflow-hidden shadow-lg ${
+//         theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+//       }`}>
+//         <div className={`px-6 py-8 ${
+//           theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+//         }`}>
+//           <h2 className="text-2xl font-bold text-center mb-2">Your Orders</h2>
+//           <p className={`text-center ${
+//             theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+//           }`}>
+//             Manage and track all your food orders
+//           </p>
 //         </div>
 
-//         {/* Completed Orders Section */}
-//         <div>
-//           <h3
-//             className={`text-lg sm:text-xl font-semibold mb-4 border-b pb-2 ${
-//               theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-//             }`}
-//           >
-//             Order History
-//           </h3>
-//           {completedOrders.length === 0 ? (
-//             <p
-//               className={`${
-//                 theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-//               } text-center py-4`}
-//             >
-//               No completed orders
-//             </p>
-//           ) : (
-//             <ul className="space-y-4">
-//               {completedOrders.map((order) => renderOrderItem(order))}
-//             </ul>
-//           )}
+//         <div className="p-6">
+//           {/* Active Orders Section */}
+//           <div className="mb-10">
+//             <div className="flex items-center mb-6">
+//               <h3 className={`text-xl font-semibold ${
+//                 theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+//               }`}>
+//                 Active Orders
+//               </h3>
+//               <div className={`ml-3 px-2.5 py-1 rounded text-xs font-medium ${
+//                 theme === 'dark' ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'
+//               }`}>
+//                 {activeOrders.length}
+//               </div>
+//             </div>
+            
+//             {activeOrders.length === 0 ? (
+//               <div className={`rounded-lg p-8 text-center ${
+//                 theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
+//               }`}>
+//                 <p className={`${
+//                   theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+//                 }`}>
+//                   You don't have any active orders at the moment
+//                 </p>
+//               </div>
+//             ) : (
+//               <ul className="space-y-4">
+//                 {activeOrders.map((order) => {
+//                   const orderTime = new Date(order.createdAt);
+//                   const currentTime = new Date();
+//                   const timeDifference = Math.floor((currentTime - orderTime) / 1000);
+//                   const canCancel = timeDifference <= 60 && order.status === 'Placed';
+
+//                   return renderOrderItem(order, canCancel);
+//                 })}
+//               </ul>
+//             )}
+//           </div>
+
+//           {/* Completed Orders Section */}
+//           <div>
+//             <div className="flex items-center mb-6">
+//               <h3 className={`text-xl font-semibold ${
+//                 theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+//               }`}>
+//                 Order History
+//               </h3>
+//               <div className={`ml-3 px-2.5 py-1 rounded text-xs font-medium ${
+//                 theme === 'dark' ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
+//               }`}>
+//                 {completedOrders.length}
+//               </div>
+//             </div>
+            
+//             {completedOrders.length === 0 ? (
+//               <div className={`rounded-lg p-8 text-center ${
+//                 theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
+//               }`}>
+//                 <p className={`${
+//                   theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+//                 }`}>
+//                   You don't have any completed orders yet
+//                 </p>
+//               </div>
+//             ) : (
+//               <ul className="space-y-4">
+//                 {completedOrders.map((order) => renderOrderItem(order))}
+//               </ul>
+//             )}
+//           </div>
 //         </div>
 //       </div>
 //     </div>

@@ -6,7 +6,7 @@ import logo from '../../assets/logo.png'
 import { ThemeContext } from "../../context/ThemeContext";
 import ThemeToggle from "../../context/ThemeToggle";
 import axios from 'axios';
-import { useRestaurantAuth } from "../../context/RestaurantAuthContext";
+
 import { axiosInstance } from '../../utils/axios';
 
 
@@ -16,7 +16,7 @@ import { axiosInstance } from '../../utils/axios';
 
 
 const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
-  const { restaurant, setRestaurant } = useRestaurantAuth();
+
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);

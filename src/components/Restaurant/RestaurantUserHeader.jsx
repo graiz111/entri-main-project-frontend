@@ -150,7 +150,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
                     : 'bg-white border-gray-100'
                 }`}>
                   
-                      <NavLink to={`orders`}>
+                      <NavLink to={`orders?restaurant_id=${_id}`}>
                         <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                           theme === 'dark'  
                             ? 'text-gray-200 hover:bg-gray-700'

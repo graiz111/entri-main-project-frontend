@@ -75,7 +75,7 @@ const { _id,role } = useParams();
       if(response.data.success === true) {
         
       }
-      navigate(`/restaurant/user/${_id}/${role}`);
+      navigate(`/${role}/user/${_id}/${role}`);
     } catch (error) {
       console.error("Error updating profile:", error);
      

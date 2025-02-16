@@ -1,26 +1,21 @@
 import React,{useState} from 'react'
-import deliverypic1 from '../../assets/deliverypic1.jpeg'
+import delpic2 from '../../assets/delpic2.jpeg'
 import respic1 from '../../assets/respic1.avif'
 import respic2 from '../../assets/respic2.avif'
 import respic3 from '../../assets/respic3.avif'
 
 
-
-
-
-
-
-const DeliveryHome = () => {
+const DeliveryUserHome = () => {
         
        
   return (
   <>
  
     
-    <div className='flex-grow bg-slate-100 py-10 overflow-scroll mt-24' >
+    <div className='flex-grow  py-10 overflow-scroll ' >
         <div className='bg-black container m-auto mx-auto items-center  flex justify-around flex-col md:flex-row sm:flex-row' >
             
-                <img src={deliverypic1} alt="" className='p-1 max-w-[500px] max-h-[500px] '/>
+                <img src={delpic2} alt="" className='p-1 max-w-[500px] max-h-[500px] '/>
                 <div className=' items-center justify-center text-white h-96 text-center font-bold mb-3 mt-6 '>
                     <h1 className='sm:text-lg md:text-xl lg:text-3xl xl:text-4xl mb-2'>Welcome</h1>
                     <h2 className='sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-2'>to</h2>
@@ -71,4 +66,4 @@ const DeliveryHome = () => {
   )
 }
 
-export default DeliveryHome
+export default DeliveryUserHome

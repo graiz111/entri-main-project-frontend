@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 import { IoCart } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
@@ -6,14 +6,16 @@ import logo from '../../assets/logo.png'
 import { useLocation } from "react-router-dom";
 import ThemeToggle from "../../context/ThemeToggle";
 
+import { ThemeContext } from "../../context/ThemeContext";
 
 
-const DeliveryHeader = ({ isOpen, setIsOpen }) => {
+const DeliveryUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) => {
   const [showSearch, setShowSearch] = useState(false);
   const searchRef = useRef(null);
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const delivery_id = searchParams.get("delivery_id");
+  const { theme } = useContext(ThemeContext);
+//   const location = useLocation();
+//   const searchParams = new URLSearchParams(location.search);
+//   const delivery_id = searchParams.get("delivery_id");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -82,22 +84,34 @@ const DeliveryHeader = ({ isOpen, setIsOpen }) => {
         <div className="relative  flex gap-10">
        <ThemeToggle/>
           <div className="cursor-pointer" onClick={toggleDropdown}>
-            <img
-              src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"
-              alt="User"
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-black p-1"
-            />
+          <img
+                src={profilePic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
+                alt="Profile"
+                className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-colors ${
+                  theme === 'dark'  
+                    ? 'border-gray-600 hover:border-gray-500'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                
+              />
           </div>
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-48 p-2 bg-green-100 border border-gray-300 rounded-lg shadow-lg">
               <ul className="p-1 space-y-1">
-               
-                  <li className="p-2 hover:bg-gray-200 cursor-pointer bg-green-300 rounded-full shadow-lg">
-                  <NavLink to="/delivery/signup?role=delivery">SignUp</NavLink>
-                </li>
-                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-yellow-300 rounded-full shadow-lg">
-                  <NavLink to="/delivery/login?role=delivery">Login</NavLink>
+              
+                  
+                  <li className="p-2 hover:bg-gray-200 cursor-pointer bg-blue-200 rounded-full shadow-lg">
+                    <NavLink to={`orders?delivery_id=${_id}`}>Orders</NavLink>
+                  </li>
+                  <li className="p-2 hover:bg-gray-200 cursor-pointer bg-blue-200 rounded-full shadow-lg">
+                    <NavLink to={`editprofile`}>Profile</NavLink>
+                  </li>
+                  <li className="p-2 hover:bg-gray-200 cursor-pointer bg-red-200 rounded-full shadow-lg">
+                    <NavLink to="/delivery">LogOut</NavLink>
+                  </li>
+                <li className="p-2 hover:bg-gray-200 cursor-pointer bg-purple-200 rounded-full shadow-lg">
+                  <NavLink to={`/delivery/user/${_id}/${role}`}>Home</NavLink>
                 </li>
                 <li className="p-2 hover:bg-gray-200 cursor-pointer bg-orange-200 rounded-full shadow-lg">
                   <NavLink to="/delivery/contact-us">Contact Us</NavLink>
@@ -112,6 +126,6 @@ const DeliveryHeader = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default DeliveryHeader;
+export default DeliveryUserHeader;
 
 
