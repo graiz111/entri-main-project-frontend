@@ -4,6 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import { ThemeContext } from "../../context/ThemeContext";
 import { Camera } from "lucide-react";
+import { axiosInstance } from "../../utils/axios";
 
 const EditProfile = () => {
   const { theme } = useContext(ThemeContext)
@@ -25,7 +26,7 @@ const { _id,role } = useParams();
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/usersall/getprofile/${role}/${_id}`, {
+        const response = await axiosInstance.get(`/usersall/getprofile/${role}/${_id}`, {
           withCredentials: true
         });
         setFormData(response.data.data);
@@ -61,8 +62,8 @@ const { _id,role } = useParams();
         data.append("file", image);
       }
       
-      const response = await axios.put(
-        `http://localhost:5001/api/usersall/editprofile/${role}/${_id}`,
+      const response = await axiosInstance.put(
+        `/usersall/editprofile/${role}/${_id}`,
         data,
         {
           headers: {

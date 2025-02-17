@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { NavLink,useLocation } from "react-router-dom";
+import { axiosInstance } from "../../utils/axios";
 
 
 const SettingsPage = () => {
@@ -20,7 +21,7 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/${restaurant_id}`);
+        const response = await axiosInstance.get(`/users/${restaurant_id}`);
         setUser(response.data);
         setPreview(response.data.profilePic);
       } catch (error) {
@@ -55,7 +56,7 @@ const SettingsPage = () => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
+      const response = await axiosInstance.put(`/users/${userId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Profile updated successfully!");

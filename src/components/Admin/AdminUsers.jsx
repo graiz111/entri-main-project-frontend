@@ -54,8 +54,8 @@ const AdminUsers = () => {
 
   const updateUser = async () => {
     try {
-      await axios.put(
-        'http://localhost:5001/api/admin/edit-user',
+      await axiosInstance.put(
+        '/admin/edit-user',
         { _id: editingUser._id, ...editedData },
         { withCredentials: true }
       );
@@ -71,7 +71,7 @@ const AdminUsers = () => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      await axios.delete('http://localhost:5001/api/admin/delete-user', {
+      await axiosInstance.delete('/admin/delete-user', {
         data: { _id },
         withCredentials: true,
       });
@@ -87,8 +87,8 @@ const AdminUsers = () => {
 
   const addUser = async () => {
     try {
-      await axios.post(
-        'http://localhost:5001/api/admin/add-user',
+      await axiosInstance.post(
+        '/admin/add-user',
         { ...newUser },
         { withCredentials: true }
       );
@@ -101,8 +101,8 @@ const AdminUsers = () => {
 
   const toggleActiveStatus = async (id, isActive) => {
     try {
-      await axios.put(
-        'http://localhost:5001/api/admin/toggle-user-status',
+      await axiosInstance.put(
+        '/admin/toggle-user-status',
         { id, isActive: !isActive },
         { withCredentials: true }
       );

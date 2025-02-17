@@ -24,19 +24,3 @@ export const RestaurantAuthProvider = ({ children }) => {
 };
 
 export const useRestaurantAuth = () => useContext(RestaurantAuthContext);
-
-// import { createContext, useContext, useState } from "react";
-
-// export const RestaurantAuthContext = createContext();
-
-// export const RestaurantAuthProvider = ({ children }) => {
-//   const [restaurant, setRestaurant] = useState(null);
-
-//   return (
-//     <RestaurantAuthContext.Provider value={{ restaurant, setRestaurant }}>
-//       {children}
-//     </RestaurantAuthContext.Provider>
-//   );
-// };
-
-// export const useRestaurantAuth = () => useContext(RestaurantAuthContext);

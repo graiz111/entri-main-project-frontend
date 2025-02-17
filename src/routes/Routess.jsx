@@ -98,42 +98,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 
 
-// const ProtectedRoute = ({ children,allowedRoles }) => {
-//   const [auth, setAuth] = useState(null);
-//   const [Role, setRole] = useState('');
-
-//   useEffect(() => {
-//     const verifyToken = async () => {
-//       try {
-//         const response = await axios.get("http://localhost:5001/api/auth/verify-token", {
-//           withCredentials: true,
-//         });
-
-//         if (response.data.success===true) {
-//           setRole(allowedRoles)
-//           if(Role && response.data.role)
-//           setAuth(true);
-//         } else {
-//           setAuth(false);
-//         }
-//       } catch (error) {
-//         setAuth(false);
-//       }
-//     };
-
-//     verifyToken();
-//   }, []);
-
-//   if (auth === null) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen">
-//         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
-//       </div>
-//     );
-//   }
-
-//   return auth ? children : <Navigate to="/" />;
-// };
 
 
 
