@@ -6,6 +6,8 @@ import { ThemeContext } from "../../context/ThemeContext";
 import ThemeToggle from "../../context/ThemeToggle";
 import logo from "../../assets/logo.png";
 
+import { axiosInstance } from "../../utils/axios";
+
 const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,6 +41,23 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
   const openCart = () => {
     navigate(`usercart/${_id}`);
   };
+  const Logout=async()=>{
+  
+
+    try {
+      const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+      console.log("entered logout user");
+      
+  
+      if (response.data.success) {
+        
+        navigate(`/${role}`);
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  
+  }
 
   return (
     <div className={`${
@@ -124,56 +143,56 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
                 onClick={toggleDropdown}
               />
 
-              {isOpen && (
-                <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
-                  theme === 'dark'  
-                    ? 'bg-gray-800 border-gray-700'
-                    : 'bg-white border-gray-100'
-                }`}>
-                  <NavLink to={`editprofile`}>
-                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}>Profile</div>
-                  </NavLink>
-                  <NavLink to={`orders?user_id=${_id}`}>
-                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}>Orders</div>
-                  </NavLink>
-                  <NavLink to={`addaddress?user_id=${_id}`}>
-                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}>Add Address</div>
-                  </NavLink>
-                  <NavLink to="contact-us">
-                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}>Contact Us</div>
-                  </NavLink> 
-                  <NavLink to="about-us">
-                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}>About Us</div>
-                  </NavLink>
-                  <NavLink to="/">
-                    <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}>Logout</div>
-                  </NavLink>
-                </div>
-              )}
+                {isOpen && (
+                        <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
+                          theme === 'dark'  
+                            ? 'bg-gray-800 border-gray-700'
+                            : 'bg-white border-gray-100'
+                        }`}>
+                          <NavLink to={`editprofile`}>
+                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                              theme === 'dark'  
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}>Profile</div>
+                          </NavLink>
+                          <NavLink to={`orders?user_id=${_id}`}>
+                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                              theme === 'dark'  
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}>Orders</div>
+                          </NavLink>
+                          <NavLink to={`addaddress?user_id=${_id}`}>
+                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                              theme === 'dark'  
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}>Add Address</div>
+                          </NavLink>
+                          <NavLink to="contact-us">
+                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                              theme === 'dark'  
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}>Contact Us</div>
+                          </NavLink>
+                          <NavLink to="about-us">
+                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                              theme === 'dark'  
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}>About Us</div>
+                          </NavLink>
+                          <NavLink >
+                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                              theme === 'dark'  
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`} onClick={()=>Logout()} >Logout</div>
+                          </NavLink>
+                        </div>
+                      )}
             </div>
           </div>
         </div>

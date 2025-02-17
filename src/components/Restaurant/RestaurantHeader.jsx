@@ -5,9 +5,6 @@ import { FiSearch, FiX, FiHome, FiPhone, FiMenu } from "react-icons/fi";
 import logo from '../../assets/logo.png'
 import { ThemeContext } from "../../context/ThemeContext";
 import ThemeToggle from "../../context/ThemeToggle";
-import axios from 'axios';
-
-import { axiosInstance } from '../../utils/axios';
 
 
 
@@ -15,10 +12,11 @@ import { axiosInstance } from '../../utils/axios';
 
 
 
-const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
+
+const RestaurantHeader = ({ isOpen, setIsOpen}) => {
 
   const searchRef = useRef(null);
-  const navigate = useNavigate();
+
   const [showSearch, setShowSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
  
@@ -66,7 +64,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
     } border-b p-3 shadow-sm fixed top-0 left-0 w-full z-50`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo and Restaurant Name */}
+       
           <div className="flex items-center space-x-4">
             <img
               src={logo}
@@ -84,7 +82,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
             </h1>
           </div>
 
-          {/* Desktop Navigation */}
+       
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to={`/restaurant`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
@@ -109,11 +107,11 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
           
           </div>
 
-          {/* Right Section */}
+         
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             
-            {/* Profile Dropdown */}
+          
             <div className="relative">
               <img
                 src= "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"
@@ -145,7 +143,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
+         
             <button
               className="md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -158,7 +156,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen,profilepic,_id }) => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+ 
       {isMobileMenuOpen && (
         <div className={`md:hidden border-t ${
           theme === 'dark'  

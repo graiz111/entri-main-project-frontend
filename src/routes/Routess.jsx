@@ -25,7 +25,7 @@ import AdminUserHome from '../components/Admin/AdminUserHome';
 import AdminRestaurant from '../components/Admin/adminRestaurant';
 import AdminUsers from '../components/Admin/AdminUsers';
 import AdminDelivery from '../components/Admin/AdminDelivery';
-import AdminEdit from '../components/Admin/AdminEdit';
+// import AdminEdit from '../components/Admin/AdminEdit';
 
 // Restaurant Components
 import RestaurantHome from '../components/Restaurant/RestaurantHome';
@@ -158,7 +158,7 @@ const router = createBrowserRouter([
       { index: true, element: <ProtectedRoute allowedRoles={["user"]}><UserHome /></ProtectedRoute> },
       { path: "orders", element: <ProtectedRoute allowedRoles={["user"]}><UserOrders /></ProtectedRoute> },
       { path: "userhome", element: <ProtectedRoute allowedRoles={["user"]}><UserHome /></ProtectedRoute> },
-      { path: "userresmenu/:restaurant_id", element: <ProtectedRoute allowedRoles={["user"]}><UseresMenu/></ProtectedRoute> },
+      { path: "userresmenu/:restaurant_id/:_id", element: <ProtectedRoute allowedRoles={["user"]}><UseresMenu/></ProtectedRoute> },
       { path: "usercart/:userId", element: <ProtectedRoute allowedRoles={["user"]}><Cart /></ProtectedRoute> },
       { path: "addaddress", element: <ProtectedRoute allowedRoles={["user"]}><UserAddress /></ProtectedRoute> },
       { path: "editprofile", element: <ProtectedRoute allowedRoles={["user"]}><EditProfile /></ProtectedRoute> },
@@ -183,7 +183,7 @@ const router = createBrowserRouter([
           { path: "admrestaurant", element: <AdminRestaurant />},
           { path: "admusers", element: <AdminUsers />},
           { path: "admdelivery", element: <AdminDelivery />},
-          { path: "admdedit", element: <AdminEdit />},
+          // { path: "admdedit", element: <AdminEdit />},
           { path: "editprofile", element: <EditProfile />},
           { path: "about-us", element: <AboutUs /> },
         ],

@@ -21,7 +21,7 @@ const RestaurantLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <RestaurantHeader isOpen={isOpen} setIsOpen={setIsOpen} />
-      <main className="flex-grow mt-20" onClick={toggleDropdown}>
+      <main className="flex-grow mt-10" onClick={toggleDropdown}>
         <Outlet/>
       </main>
       <Footer />

@@ -36,76 +36,7 @@ const Cart = () => {
       fetchCart();
     }
   }, [userId]);
-  // const addToCart = async (itemId) => {
-  //   try {
-  //     // First fetch restaurant ID
-  //     const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { 
-  //       itemId 
-  //     });
-
-  //     // if (!resResponse.data.success) {
-  //     //   toast.error("Failed to fetch restaurant information");
-  //     //   return;
-  //     // }
-
-  //     // Check if cart exists and has items from a different restaurant
-  //     if (cart && cart.items && cart.items.length > 0) {
-  //       if (cart.restaurant_id._id !== resResponse.data.restaurant_id) {
-  //         toast.error("Please add items from the same restaurant only");
-  //         return;
-  //       }
-  //     }
-
-  //     // Add item to cart
-  //     const cartResponse = await axiosInstance.post("cart/additemtocart", {
-  //       user_id: userId,
-  //       restaurant_id: resResponse.data.restaurant_id,
-  //       item_id: itemId
-  //     });
-
-  //     if (cartResponse.data.success) {
-  //       toast.success("Item added to cart!");
-  //       fetchCart(); // Refresh cart
-  //     } else {
-  //       toast.error(cartResponse.data.message || "Failed to add item to cart");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding to cart:", error);
-  //     toast.error( "items from same restaurant can oly add to cart  ");
-  //   }
-  // };
-
-  // const addToCart = async (itemId) => {
-  //   try {
-  //     // First fetch restaurant ID
-  //     const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { 
-  //       itemId 
-  //     });
-
-  //     if (!resResponse.data.success) {
-  //       toast.error("Failed to fetch restaurant information");
-  //       return;
-  //     }
-
-  //     // Add item to cart
-  //     const cartResponse = await axiosInstance.post("user/additemtocart", {
-  //       user_id: userId,
-  //       restaurant_id: resResponse.data.restaurant_id,
-  //       item_id: itemId
-  //     });
-
-  //     if (cartResponse.data.success) {
-  //       toast.success("Item added to cart!");
-  //       fetchCart(); // Refresh cart
-  //     } else {
-  //       toast.error(cartResponse.data.message || "Failed to add item to cart");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding to cart:", error);
-  //     toast.error(error.response?.data?.message || "Failed to add item to cart");
-  //   }
-  // };
-
+  
   const updateQuantity = async (cartItemId,newquantity) => {
     try {
       const response = await axiosInstance.put(`/cart/update/${cartItemId}`, {
@@ -114,7 +45,7 @@ const Cart = () => {
       });
 
       if (response.data.success) {
-        fetchCart(); // Refresh cart
+        fetchCart(); 
       } else {
         toast.error("Failed to update quantity");
       }
@@ -131,7 +62,7 @@ const Cart = () => {
       });
 
       if (response.data.success) {
-        fetchCart(); // Refresh cart
+        fetchCart();
         toast.success("Item removed from cart");
       } else {
         toast.error("Failed to remove item");

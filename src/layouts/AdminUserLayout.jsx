@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import AdminUserHeader from '../components/Admin/AdminUserHeader'
-import { axiosInstance } from '../utils/axios';
+import  {axiosInstance}  from '../utils/axios.js';
 import { useParams } from "react-router-dom";
 
 const AdminUserLayout = () => {
@@ -19,7 +19,8 @@ const AdminUserLayout = () => {
     console.log(role,_id,"here");
     
     try {
-      const response = await axiosInstance.get(`/${role}/getsingleres/${_id}`, {
+      const response = await axiosInstance.get(`/${role}/users`, {
+        params: { _id }, 
         withCredentials: true,
       });
   

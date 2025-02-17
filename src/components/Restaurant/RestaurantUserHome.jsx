@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useContext } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+
 
 import respic from '../../assets/respic.avif';
 import respic1 from '../../assets/respic1.avif';
@@ -31,7 +31,7 @@ const RestaurantUserHome = () => {
   const features = [
     {
       image: respic1,
-      title: "Attract New Customers",
+      title: "Enjoy Orders",
       description: "Reach the millions of peoples ordering on Foodie Buddie"
     },
     {

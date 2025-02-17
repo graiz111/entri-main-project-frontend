@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import { axiosInstance } from '../../utils/axios';
 
 const AdminRestaurant = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -9,20 +9,15 @@ const AdminRestaurant = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState(null);
   const [editedData, setEditedData] = useState({
-    name: "",
-    owner: "",
-    location: "",
-    email: "",
-    phone: "",
-    image: null
+    name: '',
+    email: '',
+    phone: '',
   });
+
   const [newRestaurant, setNewRestaurant] = useState({
-    name: "",
-    owner: "",
-    location: "",
-    email: "",
-    phone: "",
-    image: null
+    name: '',
+    email: '',
+    phone: '',
   });
 
   useEffect(() => {
@@ -32,10 +27,8 @@ const AdminRestaurant = () => {
   const fetchRestaurants = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/admin/restaurants', {
-        withCredentials: true
-      });
-      setRestaurants(response.data);
+      const response = await axiosInstance.get('/admin/resfetch', { withCredentials: true });
+      setRestaurants(response.data.data);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error fetching restaurants');
     } finally {
@@ -47,51 +40,34 @@ const AdminRestaurant = () => {
     setEditingRestaurant(restaurant);
     setEditedData({
       name: restaurant.name,
-      owner: restaurant.owner,
-      location: restaurant.location,
       email: restaurant.email,
       phone: restaurant.phone,
-      image: null
     });
     setShowEditModal(true);
   };
 
   const handleEditInputChange = (e) => {
-    if (e.target.name === 'image') {
-      setEditedData({ ...editedData, image: e.target.files[0] });
-    } else {
-      setEditedData({ ...editedData, [e.target.name]: e.target.value });
-    }
+    const { name, value } = e.target;
+    setEditedData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleNewRestaurantChange = (e) => {
-    if (e.target.name === 'image') {
-      setNewRestaurant({ ...newRestaurant, image: e.target.files[0] });
-    } else {
-      setNewRestaurant({ ...newRestaurant, [e.target.name]: e.target.value });
-    }
+    const { name, value } = e.target;
+    setNewRestaurant((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const updateRestaurant = async () => {
     try {
       setLoading(true);
-      const updatedData = {
-        name: editedData.name,
-        owner: editedData.owner,
-        location: editedData.location,
-        email: editedData.email,
-        phone: editedData.phone,
-        image: editedData.image
-      };
-
-      await axios.put(
-        `/api/admin/restaurants/${editingRestaurant._id}`,
-        updatedData,
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
-        }
-      );
+      await axiosInstance.put(`/admin/restaurants/${editingRestaurant._id}`, editedData, {
+        withCredentials: true,
+      });
 
       toast.success('Restaurant updated successfully');
       setShowEditModal(false);
@@ -106,30 +82,17 @@ const AdminRestaurant = () => {
   const addRestaurant = async () => {
     try {
       setLoading(true);
-      const newRestaurantData = {
-        name: newRestaurant.name,
-        owner: newRestaurant.owner,
-        location: newRestaurant.location,
-        email: newRestaurant.email,
-        phone: newRestaurant.phone,
-        image: newRestaurant.image // image may need to be handled differently in the backend
-      };
-
-      await axios.post('/api/admin/restaurants', newRestaurantData, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
+      await axiosInstance.post('/admin/restaurants', newRestaurant, {
+        withCredentials: true,
       });
 
       toast.success('Restaurant added successfully');
       setShowAddModal(false);
       fetchRestaurants();
       setNewRestaurant({
-        name: "",
-        owner: "",
-        location: "",
-        email: "",
-        phone: "",
-        image: null
+        name: '',
+        email: '',
+        phone: '',
       });
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error adding restaurant');
@@ -143,9 +106,7 @@ const AdminRestaurant = () => {
 
     try {
       setLoading(true);
-      await axios.delete(`/api/admin/restaurants/${id}`, {
-        withCredentials: true
-      });
+      await axiosInstance.delete(`/admin/restaurants/${id}`, { withCredentials: true });
       toast.success('Restaurant deleted successfully');
       fetchRestaurants();
     } catch (error) {
@@ -156,50 +117,40 @@ const AdminRestaurant = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">Registered Restaurants</h2>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-          >
-            Add Restaurant
-          </button>
-        </div>
+    <div className="p-8">
+      <div className="flex justify-between mb-6">
+        <h2 className="text-2xl font-semibold">Manage Restaurants</h2>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Add Restaurant
+        </button>
+      </div>
 
-        {/* Mobile View */}
-        <div className="md:hidden">
+      {loading ? (
+        <div className="flex justify-center items-center">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-solid border-gray-200 rounded-full" role="status">
+          </div>
+            <span className="visually-hidden">Loading...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {restaurants.map((restaurant) => (
-            <div key={restaurant.id} className="bg-white p-4 rounded-lg shadow mb-4 border">
-              <div className="mb-2">
-                <span className="font-bold">ID:</span> {restaurant.id}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Name:</span> {restaurant.name}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Owner:</span> {restaurant.owner}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Location:</span> {restaurant.location}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Email:</span> {restaurant.email}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Phone:</span> {restaurant.phone}
-              </div>
-              <div className="flex space-x-2 mt-3">
+            <div key={restaurant._id} className="p-4 bg-white rounded-lg shadow-lg">
+              <h3 className="font-semibold text-lg">{restaurant.name}</h3>
+              <p className="text-sm text-gray-500">Email: {restaurant.email}</p>
+              <p className="text-sm text-gray-500">Phone: {restaurant.phone}</p>
+              <div className="mt-4 flex justify-between">
                 <button
                   onClick={() => openEditModal(restaurant)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
+                  className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => deleteRestaurant(restaurant.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                  onClick={() => deleteRestaurant(restaurant._id)}
+                  className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                 >
                   Delete
                 </button>
@@ -207,84 +158,20 @@ const AdminRestaurant = () => {
             </div>
           ))}
         </div>
-
-        {/* Desktop View */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="py-3 px-4 text-left">ID</th>
-                <th className="py-3 px-4 text-left">Restaurant Name</th>
-                <th className="py-3 px-4 text-left">Owner</th>
-                <th className="py-3 px-4 text-left">Location</th>
-                <th className="py-3 px-4 text-left">Email</th>
-                <th className="py-3 px-4 text-left">Phone</th>
-                <th className="py-3 px-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {restaurants.map((restaurant) => (
-                <tr key={restaurant.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="py-3 px-4">{restaurant.id}</td>
-                  <td className="py-3 px-4">{restaurant.name}</td>
-                  <td className="py-3 px-4">{restaurant.owner}</td>
-                  <td className="py-3 px-4">{restaurant.location}</td>
-                  <td className="py-3 px-4">{restaurant.email}</td>
-                  <td className="py-3 px-4">{restaurant.phone}</td>
-                  <td className="py-3 px-4 text-center">
-                    <div className='flex'>
-                      <button
-                        onClick={() => openEditModal(restaurant)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition mr-2"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteRestaurant(restaurant.id)}
-                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {restaurants.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">No restaurants found.</p>
-        )}
-      </div>
+      )}
 
       {/* Edit Restaurant Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Edit Restaurant</h2>
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-xl font-semibold mb-4">Edit Restaurant</h3>
             <input
               type="text"
               name="name"
               value={editedData.name}
               onChange={handleEditInputChange}
               placeholder="Restaurant Name"
-              className="w-full border p-2 mb-3 rounded"
-            />
-            <input
-              type="file"
-              name="image"
-              onChange={handleEditInputChange}
-              className="w-full border p-2 mb-3 rounded"
-              accept="image/*"
-            />
-            <input
-              type="text"
-              name="location"
-              value={editedData.location}
-              onChange={handleEditInputChange}
-              placeholder="Location"
-              className="w-full border p-2 mb-3 rounded"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
             />
             <input
               type="email"
@@ -292,29 +179,28 @@ const AdminRestaurant = () => {
               value={editedData.email}
               onChange={handleEditInputChange}
               placeholder="Email"
-              className="w-full border p-2 mb-3 rounded"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
             />
             <input
-              type="tel"
+              type="text"
               name="phone"
               value={editedData.phone}
               onChange={handleEditInputChange}
               placeholder="Phone"
-              className="w-full border p-2 mb-3 rounded"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
             />
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="bg-gray-500 text-white px-3 py-1 rounded-md hover:bg-gray-600"
-              >
-                Cancel
-              </button>
+            <div className="flex justify-between mt-4">
               <button
                 onClick={updateRestaurant}
-                disabled={loading}
-                className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
-                {loading ? 'Updating...' : 'Update'}
+                Update
+              </button>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -323,32 +209,16 @@ const AdminRestaurant = () => {
 
       {/* Add Restaurant Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Add Restaurant</h2>
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-xl font-semibold mb-4">Add Restaurant</h3>
             <input
               type="text"
               name="name"
               value={newRestaurant.name}
               onChange={handleNewRestaurantChange}
               placeholder="Restaurant Name"
-              className="w-full border p-2 mb-3 rounded"
-            />
-            <input
-              type="text"
-              name="owner"
-              value={newRestaurant.owner}
-              onChange={handleNewRestaurantChange}
-              placeholder="Owner Name"
-              className="w-full border p-2 mb-3 rounded"
-            />
-            <input
-              type="text"
-              name="location"
-              value={newRestaurant.location}
-              onChange={handleNewRestaurantChange}
-              placeholder="Location"
-              className="w-full border p-2 mb-3 rounded"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
             />
             <input
               type="email"
@@ -356,29 +226,28 @@ const AdminRestaurant = () => {
               value={newRestaurant.email}
               onChange={handleNewRestaurantChange}
               placeholder="Email"
-              className="w-full border p-2 mb-3 rounded"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
             />
             <input
-              type="tel"
+              type="text"
               name="phone"
               value={newRestaurant.phone}
               onChange={handleNewRestaurantChange}
               placeholder="Phone"
-              className="w-full border p-2 mb-3 rounded"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
             />
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="bg-gray-500 text-white px-3 py-1 rounded-md hover:bg-gray-600"
-              >
-                Cancel
-              </button>
+            <div className="flex justify-between mt-4">
               <button
                 onClick={addRestaurant}
-                disabled={loading}
-                className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
-                {loading ? 'Adding...' : 'Add'}
+                Add
+              </button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              >
+                Cancel
               </button>
             </div>
           </div>

@@ -1,21 +1,16 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
-  Search,
-  Home,
-  Users,
-  ShoppingBag,
-  Truck,
-  Mail,
-  Menu,
-  LogOut,
-} from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Search,Home,Users,ShoppingBag,Truck,Mail,Menu, LogOut} from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import ThemeToggle from '../../context/ThemeToggle';
 import logo from '../../assets/logo.png';
+import { axiosInstance } from '../../utils/axios';
 
-const AdminUserHeader = ({ isOpen,setIsOpen,profilePic, _id, role, name }) => {
-  
+const AdminUserHeader = ({ isOpen,setIsOpen,profilePic,_id, role, name }) => {
+
+
+
+  const navigate=useNavigate()
   const [showSearch, setShowSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchRef = useRef(null);
@@ -40,6 +35,23 @@ const AdminUserHeader = ({ isOpen,setIsOpen,profilePic, _id, role, name }) => {
   }, []);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
+
+const Logout=async()=>{
+  
+console.log("enteredadmin logout front ");
+
+  try {
+    const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+
+    if (response.data.success) {
+      
+      navigate(`/${role}`);
+    }
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+
+}
 
   return (
     <div className={`${
@@ -69,7 +81,7 @@ const AdminUserHeader = ({ isOpen,setIsOpen,profilePic, _id, role, name }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to="/admin">
+            <NavLink to={`/admin/user/${_id}/${role}`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                 theme === 'dark'   
                   ? 'hover:bg-gray-700 text-gray-200' 
@@ -117,34 +129,33 @@ const AdminUserHeader = ({ isOpen,setIsOpen,profilePic, _id, role, name }) => {
                 }`}
                 onClick={toggleDropdown}
               />
-
-              {isOpen && (
-                <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
-                  theme === 'dark'  
-                    ? 'bg-gray-800 border-gray-700'
-                    : 'bg-white border-gray-100'
-                }`}>
-                  <NavLink to="/admin/coupons">
-                    <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
-                      theme === 'dark'  
-                        ? 'text-gray-200 hover:bg-gray-700'
-                        : 'text-gray-700 hover:bg-gray-100'
+                {isOpen && (
+                  <div className="relative">
+                    <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
+                      theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
                     }`}>
-                      <Users className="h-4 w-4 mr-2" />
-                      Add Coupons
+                      <NavLink to="/admin/coupons">
+                        <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                        }`}>
+                          <Users className="h-4 w-4 mr-2" />
+                          Add Coupons
+                        </div>
+                      </NavLink>
+                      
+                      <div
+                        className={`flex items-center px-4 py-2 text-sm cursor-pointer hover:bg-opacity-20 ${
+                          theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                        onClick={() => Logout()} 
+                      >
+                        <LogOut className="h-4 w-4 mr-2"/>
+                        Logout
+                      </div>
                     </div>
-                  </NavLink>
-                
-                  <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 cursor-pointer ${
-                    theme === 'dark'  
-                      ? 'text-gray-200 hover:bg-gray-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
                   </div>
-                </div>
-              )}
+                )}
+
             </div>
 
             {/* Mobile Menu Button */}
@@ -199,189 +210,3 @@ const AdminUserHeader = ({ isOpen,setIsOpen,profilePic, _id, role, name }) => {
 };
 
 export default AdminUserHeader;
-// import React, { useState, useRef, useEffect, useContext } from "react";
-// import { FiSearch, FiX, FiMenu } from "react-icons/fi";
-// import { NavLink, useLocation } from "react-router-dom";
-// import axios from "axios";
-// import logo from "../../assets/logo.png";
-// import ThemeToggle from "../../context/ThemeToggle";
-// import { ThemeContext } from "../../context/ThemeContext";
-
-// const AdminHeader = ({ isOpen, setIsOpen }) => {
-//   const [user, setUser] = useState({});
-//   const [showSearch, setShowSearch] = useState(false);
-
-//   const { theme } = useContext(ThemeContext);
-
-//   const toggleDropdown = () => {
-//     setIsOpen(!isOpen);
-//   };
-
-//   const toggleSearch = () => {
-//     setShowSearch(!showSearch);
-//   };
-
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (searchRef.current && !searchRef.current.contains(event.target)) {
-//         setShowSearch(false);
-//       }
-//     };
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => {
-//       document.removeEventListener("mousedown", handleClickOutside);
-//     };
-//   }, []);
-
-//   return (
-//     <header
-//       className={`fixed top-0 left-0 w-full z-50 shadow-sm ${
-//         theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-//       }`}
-//     >
-//       <div className="container mx-auto p-5 flex justify-between items-center">
-//         {/* Logo and Title */}
-//         <div className="flex items-center space-x-4">
-//           <div className="w-10 h-10">
-//             <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-//           </div>
-//           <h1 className="text-xl font-semibold hidden sm:block">Foodie Buddie Admin</h1>
-//         </div>
-
-//         {/* Search Bar */}
-//         <div className="flex items-center space-x-4">
-//           {!showSearch ? (
-//             <FiSearch
-//               className={`h-6 w-6 cursor-pointer sm:hidden ${
-//                 theme === "dark" ? "text-white" : "text-gray-900"
-//               }`}
-//               onClick={toggleSearch}
-//               aria-label="Open search"
-//             />
-//           ) : (
-//             <div
-//               ref={searchRef}
-//               className="absolute top-16 left-1/2 transform -translate-x-1/2 w-10/12 sm:w-auto"
-//             >
-//               <div
-//                 className={`flex items-center h-10 rounded-lg px-3 w-full ${
-//                   theme === "dark" ? "bg-gray-700" : "bg-gray-100"
-//                 }`}
-//               >
-//                 <FiSearch
-//                   className={`h-5 w-5 ${
-//                     theme === "dark" ? "text-gray-400" : "text-gray-600"
-//                   }`}
-//                 />
-//                 <input
-//                   type="text"
-//                   placeholder="Search..."
-//                   className={`ml-2 outline-none border-none bg-transparent text-sm w-full ${
-//                     theme === "dark" ? "text-white" : "text-gray-700"
-//                   }`}
-//                   aria-label="Search input"
-//                 />
-//                 <FiX
-//                   className={`h-5 w-5 cursor-pointer ${
-//                     theme === "dark" ? "text-gray-400" : "text-gray-600"
-//                   }`}
-//                   onClick={toggleSearch}
-//                   aria-label="Close search"
-//                 />
-//               </div>
-//             </div>
-//           )}
-
-//           <div
-//             className={`hidden sm:flex items-center h-10 rounded-lg px-3 w-64 ${
-//               theme === "dark" ? "bg-gray-700" : "bg-gray-100"
-//             }`}
-//           >
-//             <FiSearch
-//               className={`h-5 w-5 ${
-//                 theme === "dark" ? "text-gray-400" : "text-gray-600"
-//               }`}
-//             />
-//             <input
-//               type="text"
-//               placeholder="Search..."
-//               className={`ml-2 outline-none border-none bg-transparent text-sm w-full ${
-//                 theme === "dark" ? "text-white" : "text-gray-700"
-//               }`}
-//               aria-label="Search input"
-//             />
-//           </div>
-//         </div>
-
-//         {/* Profile and Dropdown */}
-//         <div className="flex items-center space-x-6">
-//           <ThemeToggle />
-//           <div className="relative">
-//             <button
-//               onClick={toggleDropdown}
-//               className="focus:outline-none"
-//               aria-label="Toggle dropdown"
-//             >
-//               <img
-//                 src={
-                 
-//                   "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"
-//                 }
-//                 alt="Profile"
-//                 className="w-10 h-10 rounded-full border-2 p-1"
-//                 style={{
-//                   borderColor: theme === "dark" ? "#4A5568" : "#CBD5E0",
-//                 }}
-//               />
-//             </button>
-
-//             {isOpen && (
-//               <div
-//                 className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg ${
-//                   theme === "dark" ? "bg-gray-700" : "bg-white"
-//                 }`}
-//               >
-//                 <ul className="py-2">
-//                 <li>
-//                         <NavLink
-//                           to="/admin/signup?role=admin"
-//                           className={`block px-4 py-2 hover:bg-gray-200 ${
-//                             theme === "dark" ? "text-white hover:bg-gray-600" : "text-gray-700"
-//                           }`}
-//                         >
-//                           Sign Up
-//                         </NavLink>
-//                       </li>
-//                       <li>
-//                         <NavLink
-//                           to="/admin/login?role=admin"
-//                           className={`block px-4 py-2 hover:bg-gray-200 ${
-//                             theme === "dark" ? "text-white hover:bg-gray-600" : "text-gray-700"
-//                           }`}
-//                         >
-//                           Login
-//                         </NavLink>
-//                       </li>
-                 
-//                   <li>
-//                     <NavLink
-//                       to="/admin/contact-us"
-//                       className={`block px-4 py-2 hover:bg-gray-200 ${
-//                         theme === "dark" ? "text-white hover:bg-gray-600" : "text-gray-700"
-//                       }`}
-//                     >
-//                       Contact Us
-//                     </NavLink>
-//                   </li>
-              
-//                 </ul>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// };
-
-// export default AdminHeader;

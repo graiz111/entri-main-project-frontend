@@ -1,54 +1,79 @@
-import React,{useState,useEffect} from 'react'
-import { NavLink,useLocation } from "react-router-dom";
-import axios from 'axios'
+import React from 'react';
+import { NavLink, useLocation } from "react-router-dom";
+import { Building2, Users, BarChart3, Shield } from "lucide-react";
 
 const AdminHome = () => {
-  const [User, setUser] = useState({})
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const _id = searchParams.get("user_id");
-  console.log("residin home ",_id);
 
-  useEffect(() => {
-      if (!_id) return;
-  
-      const fetchUserDetails = async () => {
-        try {
-          const response = await axios.get(`http://localhost:5001/api/admin/users`, {
-            params: { _id }, // Pass _id in query parameters
-            withCredentials: true, // Ensures cookies are sent if needed
-          });
-        
-          setUser(response.data);
-          
-        } catch (err) {
-          console.log(err)
-        }
-      };
-  
-      fetchUserDetails();
-    }, [_id]);
-    console.log('admin',User);
-    // const Profilepic=User.profilePic
-          
   return (
-    <>
-    <div className='flex flex-col '>
-      <div className='flex-grow py-10 overflow-scroll' >
-              <div className='bg-gray-500 container m-auto mx-auto items-center  flex justify-around flex-col md:flex-row sm:flex-row' >
-                  
-                     
-      
-                  
-              </div>
-             
-      
-          </div>
-      
-  
-    </div>
-    </>
-  )
-}
+    <div className="bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Welcome to Admin Dashboard
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Manage your organization efficiently with our comprehensive admin tools and analytics
+          </p>
+        </div>
 
-export default AdminHome
+        {/* Feature Boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <div className="flex items-center space-x-4">
+              <Users className="h-8 w-8 text-blue-600" />
+              <div>
+                <h3 className="text-lg font-semibold">User Management</h3>
+                <p className="text-gray-600">Manage user accounts and permissions</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <div className="flex items-center space-x-4">
+              <BarChart3 className="h-8 w-8 text-green-600" />
+              <div>
+                <h3 className="text-lg font-semibold">Analytics</h3>
+                <p className="text-gray-600">Track performance metrics</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <div className="flex items-center space-x-4">
+              <Shield className="h-8 w-8 text-purple-600" />
+              <div>
+                <h3 className="text-lg font-semibold">Security</h3>
+                <p className="text-gray-600">Monitor and manage security settings</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <div className="flex items-center space-x-4">
+              <Building2 className="h-8 w-8 text-orange-600" />
+              <div>
+                <h3 className="text-lg font-semibold">Organization</h3>
+                <p className="text-gray-600">Configure organization settings</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Login Section */}
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-6">Login to Continue</h2>
+          <NavLink 
+            to={`/admin/login?role=admin`}
+            className="block w-full bg-green-600 text-white text-center py-3 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Go to Login
+          </NavLink>
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+export default AdminHome;

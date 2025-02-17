@@ -5,7 +5,7 @@ import { FiSearch, FiX, FiHome, FiPhone, FiMenu } from "react-icons/fi";
 import logo from '../../assets/logo.png'
 import { ThemeContext } from "../../context/ThemeContext";
 import ThemeToggle from "../../context/ThemeToggle";
-import axios from 'axios';
+import{ axiosInstance} from '../../utils/axios';
 
 
 
@@ -50,6 +50,21 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
       document.head.removeChild(link);
     };
   }, []);
+  const LogOut=async()=>{
+   
+
+    try {
+      const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+  
+      if (response.data.success) {
+       
+        navigate(`/`);
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+
+  }
 
 
   
@@ -64,7 +79,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
     } border-b p-3 shadow-sm fixed top-0 left-0 w-full z-50`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo and Restaurant Name */}
+
           <div className="flex items-center space-x-4">
             <img
               src={logo}
@@ -82,7 +97,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
             </h1>
           </div>
 
-          {/* Desktop Navigation */}
+
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to={`/restaurant?restaurant_id=${_id}`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
@@ -105,7 +120,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
               </button>
             </NavLink>
             
-            {/* Search Bar */}
+
             <div className="relative">
               <div className={`flex items-center rounded-full px-4 py-2 ${
                 theme === 'dark'   
@@ -126,11 +141,11 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
             </div>
           </div>
 
-          {/* Right Section */}
+         
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             
-            {/* Profile Dropdown */}
+           
             <div className="relative">
               <img
                 src={profilePic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
@@ -174,19 +189,19 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
                         </div>
                       </NavLink>
 
-                      <NavLink to={``}>
-                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                     
+                        <div className={`px-4 py-2 text-sm cursor-pointer hover:bg-opacity-20 ${
                           theme === 'dark'  
                             ? 'text-gray-200 hover:bg-gray-700'
                             : 'text-gray-700 hover:bg-gray-100'
-                        }`} >Logout</div>
-                      </NavLink>
+                        }`} onClick={()=>LogOut()}>Logout</div>
+                      
                   
                 </div>
               )}
             </div>
 
-            {/* Mobile Menu Button */}
+          
             <button
               className="md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -199,7 +214,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+  
       {isMobileMenuOpen && (
         <div className={`md:hidden border-t ${
           theme === 'dark'  
@@ -223,7 +238,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
                 }`}
               />
             </div>
-            <NavLink to="/restaurant/user">
+            <NavLink to={`/restaurant/user/${_id}/${role}`}>
               <div className={`px-4 py-2 text-sm rounded-lg ${
                 theme === 'dark'  
                   ? 'text-gray-200 hover:bg-gray-700'

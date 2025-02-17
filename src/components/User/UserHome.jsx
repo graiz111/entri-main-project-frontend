@@ -88,7 +88,7 @@ const UserHome = () => {
     
 
     const handleRestaurantClick = (restaurantsId) => {
-        navigate(`userresmenu/${restaurantsId}`);
+        navigate(`userresmenu/${restaurantsId}/${_id}`);
     };
 
     return (

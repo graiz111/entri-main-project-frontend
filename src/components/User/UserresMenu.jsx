@@ -4,9 +4,10 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { FiShoppingCart, FiStar, FiArrowLeft } from 'react-icons/fi';
 import { useNavigate,useLocation, useParams } from 'react-router-dom';
 import { axiosInstance } from '../../utils/axios';
+import { ToastContainer,toast } from 'react-toastify';
 
 const UseresMenu = () => {
-  const{restaurant_id}=useParams()
+  const{restaurant_id,_id}=useParams()
         console.log(restaurant_id,"resinmenu");
         
    
@@ -45,17 +46,45 @@ const UseresMenu = () => {
     }, [restaurant_id]);
 
     useEffect(() => {
-        // Calculate cart total whenever cart changes
+        
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         setCartTotal(total);
     }, [cart]);
 
-  const addToCart=(_id)=>{
-
+    const addToCart = async (item_id) => {
+        try {
+            
+            const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { itemId: item_id });
+            console.log("Fetched Restaurant ID Response:", resResponse.data);
     
-
-  }
-
+            if (resResponse.data.success === true) {
+                const postData = {
+                    user_id: _id,                                
+                    restaurant_id: restaurant_id, 
+                    item_id: item_id
+                };
+    
+                console.log("Post Data for Cart:", postData);
+    
+                // Add item to cart
+                const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
+    
+                if (cartResponse.data.success === true) {
+                    toast.success("Item added to cart!");
+                    console.log("Cart Response:", cartResponse.data);
+                } else {
+                    toast.error("Failed to add item to cart!");
+                }
+            } else {
+                toast.error("Failed to fetch restaurant ID!");
+            }
+    
+        } catch (error) {
+            console.error("Error in addToCart:", error);
+            toast.error("error happeed in cart add");
+        }
+    };
+    
   
 
     
@@ -200,6 +229,7 @@ const UseresMenu = () => {
                     </div>
                 </div>
             )}
+            <ToastContainer/>
         </div>
     );
 };
