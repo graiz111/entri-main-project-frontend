@@ -111,7 +111,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
       { path: "about-us", element: <AboutUs /> },
-      { path: "/user/:userId/user/payment/success", element: <Success /> },
+      { path: "user/:userId/user/payment/success", element: <Success /> },
       { path: "user/payment/cancel", element: <Failure /> },
     ],
   },

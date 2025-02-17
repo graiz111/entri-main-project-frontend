@@ -51,7 +51,7 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
   
       if (response.data.success) {
         
-        navigate(`/${role}`);
+        navigate(`/`);
       }
     } catch (error) {
       console.error("Logout failed:", error);
