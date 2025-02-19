@@ -21,7 +21,7 @@ const RestaurantOrders = () => {
     fetchOrders();
 
     socket.on('orderStatusUpdated', (updatedOrder) => {
-      console.log("Received updated order via socket:", updatedOrder);
+      ("Received updated order via socket:", updatedOrder);
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === updatedOrder._id ? updatedOrder : order
@@ -29,10 +29,10 @@ const RestaurantOrders = () => {
       );
     });
     // socket.on('orderStatusUpdated', (updatedOrder) => {
-    //   console.log("Received updated order via socket:", updatedOrder);
-    //   console.log("Updated Order ID:", updatedOrder._id);
+    //   ("Received updated order via socket:", updatedOrder);
+    //   ("Updated Order ID:", updatedOrder._id);
     //   setOrders((prevOrders) => {
-    //     console.log("Previous Orders:", prevOrders);
+    //     ("Previous Orders:", prevOrders);
     //     return prevOrders.map((order) =>
     //       order._id === updatedOrder._id ? updatedOrder : order
     //     );
@@ -54,7 +54,7 @@ const RestaurantOrders = () => {
 
       if (response.data.success) {
         setOrders(response.data.data);
-        console.log("Fetched orders:", response.data.data);
+        ("Fetched orders:", response.data.data);
       } else {
         setError("Failed to fetch orders. Please try again.");
       }
@@ -71,7 +71,7 @@ const RestaurantOrders = () => {
   //     const response = await axiosInstance.put('/orders/assign-delivery', { orderId });
 
   //     if (response.data.success) {
-  //       console.log("Delivery person assigned successfully:", response.data.data);
+  //       ("Delivery person assigned successfully:", response.data.data);
   //       return response.data; 
   //     } else {
   //       console.error("Failed to assign delivery person:", response.data.message);
@@ -86,15 +86,15 @@ const RestaurantOrders = () => {
     try {
       const response = await axiosInstance.put('/orders/assign-delivery', { orderId });
   
-      console.log(response.data, "assignDeliveryResponse");
+      (response.data, "assignDeliveryResponse");
   
       if (response.data.success === true) {
         toast.success("Delivery person assigned successfully!");
-        console.log("Delivery Person Assigned:", response.data.data);
+        ("Delivery Person Assigned:", response.data.data);
         return response.data;
       } else {
-        console.log("Error Condition Met");
-        console.log("Error Message:", response.data.message);
+        ("Error Condition Met");
+        ("Error Message:", response.data.message);
         toast.error(response.data.message);
         return null;
       }

@@ -21,7 +21,7 @@ const UserLayout = () => {
    
   
   const fetchUserDetails = async (role, _id) => {
-    console.log(role,_id,"hereuser");
+    (role,_id,"hereuser");
     
     try {
       const response = await axiosInstance.get(`/${role}/user/${_id}`, {
@@ -29,7 +29,7 @@ const UserLayout = () => {
       });
   
       if (response.data.success) {
-        console.log(response.data.data,"inlayoutfetch");
+        (response.data.data,"inlayoutfetch");
         
         setUser(response.data.data)
       } else {

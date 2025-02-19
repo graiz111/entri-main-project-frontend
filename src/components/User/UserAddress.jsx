@@ -12,7 +12,7 @@ const UserAddress = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const params = new URLSearchParams(window.location.search);
 const userId = params.get('user_id');
-// console.log(userId,"inaddressaddd");
+// (userId,"inaddressaddd");
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

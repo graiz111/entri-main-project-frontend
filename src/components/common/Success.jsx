@@ -17,7 +17,7 @@ const Success = () => {
   
   useEffect(() => {
     const handleSuccess = async () => {
-      console.log("entered success page");
+      ("entered success page");
       
       try {
       

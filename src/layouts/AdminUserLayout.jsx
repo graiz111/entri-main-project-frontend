@@ -16,7 +16,7 @@ const AdminUserLayout = () => {
   
 
   const fetchUserDetails = async (role, _id) => {
-    console.log(role,_id,"here");
+    (role,_id,"here");
     
     try {
       const response = await axiosInstance.get(`/${role}/users`, {
@@ -25,7 +25,7 @@ const AdminUserLayout = () => {
       });
   
       if (response.data.success) {
-        console.log(response.data.data,"inadmin layoutfetch");
+        (response.data.data,"inadmin layoutfetch");
         
         setUser(response.data.data)
       } else {

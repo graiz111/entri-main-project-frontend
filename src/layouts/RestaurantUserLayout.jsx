@@ -18,7 +18,7 @@ const RestaurantUserLayout = () => {
   
 
   const fetchUserDetails = async (role, _id) => {
-    console.log(role,_id,"here");
+    (role,_id,"here");
     
     try {
       const response = await axiosInstance.get(`/${role}/getsingleres/${_id}`, {
@@ -26,7 +26,7 @@ const RestaurantUserLayout = () => {
       });
   
       if (response.data.success) {
-        console.log(response.data.data,"inlayoutfetch");
+        (response.data.data,"inlayoutfetch");
         
         setUser(response.data.data)
       } else {

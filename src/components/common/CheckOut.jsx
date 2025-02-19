@@ -19,7 +19,7 @@ const CheckOut = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("entered checkout", userId);
+    ("entered checkout", userId);
     
     const fetchData = async () => {
       try {
@@ -27,7 +27,7 @@ const CheckOut = () => {
         // Fetch cart
         const cartResponse = await axiosInstance.get(`/cart/cart/${userId}`);
         setCart(cartResponse.data.data);
-        console.log("caetrescheckout cart",cartResponse.data.data);
+        ("caetrescheckout cart",cartResponse.data.data);
         
         
         // Fetch addresses
@@ -72,7 +72,7 @@ const CheckOut = () => {
 
   const handlePlaceOrder = async (totalPrice) => {
 
-    console.log("entered",totalPrice);
+    ("entered",totalPrice);
     
     
     if (!selectedAddress) {
@@ -85,12 +85,12 @@ const CheckOut = () => {
         try {
        
         
-          console.log(cart.items, "items");
-          console.log("address id check in checkout",selectedAddress);
+          (cart.items, "items");
+          ("address id check in checkout",selectedAddress);
           
           const stripe = await loadStripe(import.meta.env.VITE_PUBLISHABLE_KEY);
           
-          console.log("cart total in fun4",cart.totalPrice);
+          ("cart total in fun4",cart.totalPrice);
           
           const response = await axiosInstance.post("/payment/create-checkout-session", {
             userId: userId,
@@ -100,13 +100,13 @@ const CheckOut = () => {
             items: cart.items,
           });
           
-          console.log(response.data, "=======session");
+          (response.data, "=======session");
           const result = await stripe.redirectToCheckout({
             sessionId: response.data.sessionId,
           });
           
           if (result.error) {
-            console.log(result.error);
+            (result.error);
           }
         } catch (error) {
           console.error("Error creating checkout session:", error);

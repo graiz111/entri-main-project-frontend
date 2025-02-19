@@ -8,7 +8,7 @@ import { ToastContainer,toast } from 'react-toastify';
 
 const UseresMenu = () => {
   const{restaurant_id,_id}=useParams()
-        console.log(restaurant_id,"resinmenu");
+        (restaurant_id,"resinmenu");
         
    
     const navigate = useNavigate();
@@ -33,7 +33,7 @@ const UseresMenu = () => {
 
                 const menuResponse = await axiosInstance.get(`/restaurantadd/getallitemsuser/${restaurant_id}`);
                 setMenuItems(menuResponse.data.data);
-                console.log(menuResponse.data.data);
+                (menuResponse.data.data);
                 
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
@@ -55,7 +55,7 @@ const UseresMenu = () => {
         try {
             
             const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { itemId: item_id });
-            console.log("Fetched Restaurant ID Response:", resResponse.data);
+            ("Fetched Restaurant ID Response:", resResponse.data);
     
             if (resResponse.data.success === true) {
                 const postData = {
@@ -64,13 +64,13 @@ const UseresMenu = () => {
                     item_id: item_id
                 };
     
-                console.log("Post Data for Cart:", postData);
+                ("Post Data for Cart:", postData);
     
                 const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
     
                 if (cartResponse.data.success === true) {
                     toast.success("Item added to cart!");
-                    console.log("Cart Response:", cartResponse.data);
+                    ("Cart Response:", cartResponse.data);
                 } else {
                     toast.error("Failed to add item to cart!");
                 }

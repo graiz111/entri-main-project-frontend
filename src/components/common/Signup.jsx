@@ -94,7 +94,7 @@ const Signup = () => {
         setMessage({ text: response.data.message, type: "success" });
         const userData = response.data.data;
     
-        console.log("entered ",response.data.data.role);
+        ("entered ",response.data.data.role);
         
         setTimeout(() => {
           navigate(userData.role === "user" ? `/${userData.role}/${userData._id}/${userData.role}` : `/${userData.role}/user/${userData._id}/${userData.role}`);
@@ -359,7 +359,7 @@ export default Signup;
 //         setMessage({ text: response.data.message, type: "success" });
 //         const userData = response.data.data;
     
-//         console.log("entered ",response.data.data.role);
+//         ("entered ",response.data.data.role);
         
 //       setTimeout(() => {
 //         navigate(userData.role === "user" ? `/${userData.role}/${userData._id}/${userData.role}` : `/${userData.role}/user/${userData._id}/${userData.role}`);

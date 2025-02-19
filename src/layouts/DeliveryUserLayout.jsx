@@ -16,7 +16,7 @@ const DeliveryUserLayout = () => {
   
 
   const fetchUserDetails = async (role, _id) => {
-    console.log(role,_id,"here");
+    (role,_id,"here");
     
     try {
       const response = await axiosInstance.get(`/${role}/getdeliveryboy/${_id}`, {
@@ -24,7 +24,7 @@ const DeliveryUserLayout = () => {
       });
   
       if (response.data.success) {
-        console.log(response.data.data,"in delivery layoutfetch ");
+        (response.data.data,"in delivery layoutfetch ");
         
         setUser(response.data.data)
       } else {

@@ -33,7 +33,7 @@ const AdminUsers = () => {
       });
       setUsers(response.data.data);
     } catch (err) {
-      console.log('Error fetching users:', err);
+      ('Error fetching users:', err);
     }
   };
 
@@ -64,7 +64,7 @@ const AdminUsers = () => {
       setEditingUser(null);
       fetchUsers();
     } catch (err) {
-      console.log('Error updating user:', err);
+      ('Error updating user:', err);
     }
   };
 
@@ -78,7 +78,7 @@ const AdminUsers = () => {
       });
       fetchUsers();
     } catch (err) {
-      console.log('Error deleting user:', err);
+      ('Error deleting user:', err);
     }
   };
 
@@ -96,7 +96,7 @@ const AdminUsers = () => {
       setShowAddUserModal(false);
       fetchUsers();
     } catch (err) {
-      console.log('Error adding user:', err);
+      ('Error adding user:', err);
     }
   };
 
@@ -114,7 +114,7 @@ const AdminUsers = () => {
         )
       );
     } catch (err) {
-      console.log('Error updating user status:', err);
+      ('Error updating user status:', err);
     }
   };
 

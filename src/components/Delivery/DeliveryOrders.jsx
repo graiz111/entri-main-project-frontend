@@ -34,7 +34,7 @@ const DeliveryOrders = () => {
 
     // Listen for order status updates from Socket.IO
     socket.on('orderStatusUpdated', (updatedOrder) => {
-      console.log("Received updated order via socket:", updatedOrder);
+      ("Received updated order via socket:", updatedOrder);
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           getOrderId(order) === getOrderId(updatedOrder) ? updatedOrder : order
@@ -58,7 +58,7 @@ const DeliveryOrders = () => {
       });
 
       if (response.data.success) {
-        console.log("Orders fetched successfully:", response.data.data);
+        ("Orders fetched successfully:", response.data.data);
         setOrders(response.data.data);
       } else {
         setError("Failed to fetch orders. Please try again.");

@@ -10,7 +10,7 @@ import{ axiosInstance} from '../../utils/axios';
 
 
 const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) => {
-  console.log(profilePic,_id,role,name,"userheader");
+  (profilePic,_id,role,name,"userheader");
   
  const { theme } = useContext(ThemeContext);
   

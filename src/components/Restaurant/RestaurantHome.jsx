@@ -196,7 +196,7 @@ export default RestaurantHome;
 //     const location = useLocation();
 //     const searchParams = new URLSearchParams(location.search);
 //     const restaurant_id = searchParams.get("restaurant_id");
-//     console.log("residin home ",restaurant_id);
+//     ("residin home ",restaurant_id);
 
 //     useEffect(() => {
 //         if (!restaurant_id) return;
@@ -210,13 +210,13 @@ export default RestaurantHome;
           
 //             setUser(response.data);
 //           } catch (err) {
-//             console.log(err)
+//             (err)
 //           }
 //         };
     
 //         fetchUserDetails();
 //       }, [restaurant_id]);
-//       console.log('reshomeuseeffect',User);
+//       ('reshomeuseeffect',User);
       
        
 //   return (

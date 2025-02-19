@@ -46,7 +46,7 @@ const UserHome = () => {
         const fetchCoupons = async () => {
             try {
                 const couponsResponse = await axiosInstance.get('/user/couponsfetch');
-                console.log("couponresponse",couponsResponse);
+                ("couponresponse",couponsResponse);
                 
                 setCoupons(couponsResponse.data|| []);
             } catch (error) {
@@ -75,7 +75,7 @@ const UserHome = () => {
         try {
             // Fetch restaurant ID using item ID
             const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { itemId: item_id });
-            console.log("Fetched Restaurant ID Response:", resResponse.data);
+            ("Fetched Restaurant ID Response:", resResponse.data);
     
             if (resResponse.data.success === true) {
                 const postData = {
@@ -84,30 +84,30 @@ const UserHome = () => {
                     item_id: item_id
                 };
     
-                console.log("Post Data for Cart:", postData);
+                ("Post Data for Cart:", postData);
     
               
             //     const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
-            //     console.log(cartResponse.data,"datacartres");
+            //     (cartResponse.data,"datacartres");
                 
               
     
             //     if (cartResponse.data.success === true) {
             //         toast.success("Item added to cart!");
-            //         console.log("Cart Response:", cartResponse.data);
+            //         ("Cart Response:", cartResponse.data);
             //     } else {
             //         toast.error(cartResponse.data.message);
             //     }
             try {
                 const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
-                console.log(cartResponse.data, "datacartres");
+                (cartResponse.data, "datacartres");
               
                 if (cartResponse.data.success === true) {
                   toast.success("Item added to cart!");
-                  console.log("Cart Response:", cartResponse.data);
+                  ("Cart Response:", cartResponse.data);
                 } else {
-                  console.log("Error Condition Met");
-                  console.log("Error Message:", cartResponse.data.message);
+                  ("Error Condition Met");
+                  ("Error Message:", cartResponse.data.message);
                   toast.error(cartResponse.data.message); // This should now work
                 }
               } catch (error) {

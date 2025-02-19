@@ -91,7 +91,7 @@ const Cart = () => {
         cartTotal: cart.totalPrice,
       });
   
-      console.log("Coupon Validation Response:", couponResponse.data);
+      ("Coupon Validation Response:", couponResponse.data);
   
       if (couponResponse.data.success) {
         const discount = couponResponse.data.discountPercentage;
@@ -104,18 +104,18 @@ const Cart = () => {
           amount: newTotal,
         });
   
-        console.log("Cart Update Response:", updateResponse.data);
+        ("Cart Update Response:", updateResponse.data);
   
         if (updateResponse.data.success) {
           setDiscountedTotal(newTotal);
           setCouponSuccess(`Applied ${discount}% discount`);
           toast.success(`Coupon applied successfully! Saved ₹${discountAmount.toFixed(2)}`);
         } else {
-          console.log("Cart Update Failed:", updateResponse.data.message);
+          ("Cart Update Failed:", updateResponse.data.message);
           toast.error(updateResponse.data.message);
         }
       } else {
-        console.log("Coupon Validation Failed:", couponResponse.data.message);
+        ("Coupon Validation Failed:", couponResponse.data.message);
         toast.error(couponResponse.data.message);
       }
     } catch (error) {

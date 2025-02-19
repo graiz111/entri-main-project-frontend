@@ -112,7 +112,7 @@ const fetchMenuItems = async () => {
                 
                
             });
-            console.log(response,"responseitems");
+            (response,"responseitems");
             if(response.data.success===true){
                 fetchMenuItems();
                 handleCloseModal();
