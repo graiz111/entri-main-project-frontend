@@ -13,7 +13,9 @@ const UserAddress = () => {
   const params = new URLSearchParams(window.location.search);
 const userId = params.get('user_id');
 // console.log(userId,"inaddressaddd");
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const [formData, setFormData] = useState({
     address_line_1: '',
@@ -25,7 +27,7 @@ const userId = params.get('user_id');
     country: 'India'
   });
 
-  // Fetch all addresses on component mount
+ 
   useEffect(() => {
     fetchAddresses();
   }, []);
@@ -37,17 +39,15 @@ const userId = params.get('user_id');
         user_id: userId 
       });
       
-      // Make sure we always set an array
       if (response.data.success && Array.isArray(response.data.addresses)) {
         setAddresses(response.data.addresses);
       } else {
-        // If response is not as expected, set to empty array and log error
         setAddresses([]);
         console.error('Invalid address data received:', response.data);
       }
     } catch (error) {
       console.error('Error fetching addresses:', error);
-      setAddresses([]); // Ensure addresses is an array on error
+      setAddresses([]); 
       setMessage({ 
         type: 'error', 
         text: 'Failed to load addresses or no address available add one '
@@ -55,7 +55,6 @@ const userId = params.get('user_id');
     }
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -64,7 +63,6 @@ const userId = params.get('user_id');
     }));
   };
 
-  // Handle edit button click
   const handleEdit = async (addressId) => {
     setIsLoading(true);
     try {
@@ -90,7 +88,6 @@ const userId = params.get('user_id');
     }
   };
 
-  // Reset form and exit edit mode
   const handleCancel = () => {
     setFormData({
       address_line_1: '',
@@ -106,7 +103,6 @@ const userId = params.get('user_id');
     setMessage({ type: '', text: '' });
   };
 
-  // Handle form submission for both add and edit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -117,14 +113,12 @@ const userId = params.get('user_id');
       
       
       if (editMode) {
-        // Update existing address
         response = await axiosInstance.post('/user/addresses', {
           action: 'edit',
           address_id: currentAddressId,
           ...formData
         });
       } else {
-        // Add new address
         response = await axiosInstance.post('/user/addresses', {
           action: 'add',
           user_id: userId,
@@ -138,7 +132,6 @@ const userId = params.get('user_id');
           text: editMode ? 'Address updated successfully!' : 'Address added successfully!'
         });
         
-        // Reset form after successful submission
         setFormData({
           address_line_1: '',
           address_line_2: '',
@@ -149,13 +142,11 @@ const userId = params.get('user_id');
           country: 'India'
         });
         
-        // Exit edit mode if we were in it
         if (editMode) {
           setEditMode(false);
           setCurrentAddressId(null);
         }
         
-        // Refresh the address list
         fetchAddresses();
       } else {
         throw new Error(response.data.message || 'Operation failed');
@@ -170,7 +161,6 @@ const userId = params.get('user_id');
     }
   };
   
-  // Handle delete button click
   const handleDelete = async (addressId) => {
     if (!window.confirm('Are you sure you want to delete this address?')) {
       return;
@@ -189,10 +179,8 @@ const userId = params.get('user_id');
           text: 'Address deleted successfully!'
         });
         
-        // Refresh the address list
         fetchAddresses();
         
-        // If we were editing this address, reset the form
         if (currentAddressId === addressId) {
           handleCancel();
         }
@@ -209,7 +197,6 @@ const userId = params.get('user_id');
     }
   };
 
-  // Dynamic styles based on theme
   const getThemeStyles = () => {
     return {
       container: `p-6 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`,
@@ -237,7 +224,6 @@ const userId = params.get('user_id');
 
   return (
     <div className={styles.container}>
-      {/* Address List Section */}
       {addresses.length > 0 && (
         <div className={styles.card}>
           <h2 className={styles.subheading}>Your Addresses</h2>
@@ -271,7 +257,6 @@ const userId = params.get('user_id');
         </div>
       )}
 
-      {/* Address Form Section */}
       <div id="addressForm" className={styles.card}>
         <h2 className={styles.heading}>
           {editMode ? 'Edit Address' : 'Add New Address'}
@@ -284,7 +269,6 @@ const userId = params.get('user_id');
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Address Line 1 */}
           <div className="mb-4">
             <label htmlFor="address_line_1" className={styles.label}>Address Line 1 *</label>
             <input
@@ -299,7 +283,6 @@ const userId = params.get('user_id');
             />
           </div>
 
-          {/* Address Line 2 */}
           <div className="mb-4">
             <label htmlFor="address_line_2" className={styles.label}>Address Line 2</label>
             <input
@@ -313,7 +296,6 @@ const userId = params.get('user_id');
             />
           </div>
 
-          {/* City and State - Two columns on larger screens */}
           <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="city" className={styles.label}>City *</label>
@@ -343,7 +325,6 @@ const userId = params.get('user_id');
             </div>
           </div>
 
-          {/* Postal Code and Phone - Two columns on larger screens */}
           <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="postal_code" className={styles.label}>Postal Code *</label>
@@ -373,7 +354,6 @@ const userId = params.get('user_id');
             </div>
           </div>
 
-          {/* Country - Pre-filled with India */}
           <div className="mb-6">
             <label htmlFor="country" className={styles.label}>Country</label>
             <input
@@ -387,7 +367,6 @@ const userId = params.get('user_id');
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="flex">
             <button
               type="submit"

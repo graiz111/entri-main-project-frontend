@@ -12,7 +12,7 @@ const { _id,role } = useParams();
   
   const [formData, setFormData] = useState({
     name: "",
-    password: "",
+    email: "",
     phone: "",
     profilePic: "",
   });
@@ -29,7 +29,10 @@ const { _id,role } = useParams();
         const response = await axiosInstance.get(`/usersall/getprofile/${role}/${_id}`, {
           withCredentials: true
         });
-        setFormData(response.data.data);
+        setFormData(prevState => ({
+          ...prevState,
+          ...response.data.data, // Merge API data while keeping initial properties
+        }));
       } catch (error) {
         console.error("Error fetching user details:", error);
         
@@ -55,7 +58,7 @@ const { _id,role } = useParams();
       const data = new FormData();
       data.append("name", formData.name);
       data.append("email", formData.email);
-      data.append("password", formData.password);
+      
       data.append("phone", formData.phone);
       
       if (image) {
@@ -74,9 +77,15 @@ const { _id,role } = useParams();
       );
       
       if(response.data.success === true) {
+        if (role==="user"){
+          navigate(`/user/${_id}/${role}`);
+        }
+        else{
+          navigate(`/${role}/user/${_id}/${role}`);
+        }
         
       }
-      navigate(`/${role}/user/${_id}/${role}`);
+      
     } catch (error) {
       console.error("Error updating profile:", error);
      
@@ -84,8 +93,8 @@ const { _id,role } = useParams();
   };
 
   return (
-    <div className={` py-12 px-4 sm:px-6 lg:px-8 ${
-      theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+    <div className={`pb-10  px-4 sm:px-6 lg:px-8 ${
+      theme === 'dark' ? 'bg-gray-900' : 'bg-white'
     }`}>
       <div className={`max-w-xl mx-auto ${
         theme === 'dark' 
@@ -217,130 +226,3 @@ const { _id,role } = useParams();
 };
 
 export default EditProfile;
-// import React, { useState, useEffect } from "react";
-// import { useLocation, useNavigate} from "react-router-dom";
-// import axios from "axios";
-// import { ToastContainer, toast } from 'react-toastify';
-
-
-// const EditProfile = () => {
-//   const location = useLocation();
-//   const searchParams = new URLSearchParams(location.search);
-
-//   const _id = searchParams.get("_id");
-//   const role = searchParams.get("role");
-//   console.log(_id,role,"fromin editpro");
-  
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     password: "",
-//     phone: "",
-//     profilePic: "",
-//   });
-//   const [image, setImage] = useState(null);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const fetchUserDetails = async () => {
-//       try {
-//         const response = await axios.get(`http://localhost:5001/api/usersall/getprofile/${role}/${_id}`,{
-//           withCredentials:true
-//         });
-//         console.log(response.data.data,"responfetchdata");
-        
-//         setFormData(response.data.data);
-//       } catch (error) {
-//         console.error("Error fetching user details:", error);
-//       }
-//     };
-//     fetchUserDetails();
-//   }, [_id, role]);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   const handleImageChange = (e) => {
-//     const file = e.target.files[0];
-//     setImage(file);
-//     setFormData({ ...formData, profilePic: file ? URL.createObjectURL(file) : "" });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-    
-//     try {
-//       const data = new FormData();
-  
-//       // Append text fields
-//       data.append("name", formData.name);
-//       data.append("email", formData.email);
-//       data.append("password", formData.password);
-//       data.append("phone", formData.phone);
-  
-//       // Append image if selected
-//       if (image) {
-//         data.append("file", image);
-//       }
-  
-//       // Send the API request
-//       const response=await axios.put(
-//         `http://localhost:5001/api/usersall/editprofile/${role}/${_id}`,
-//         data,
-//         {
-//           headers: {
-//             "Content-Type": "multipart/form-data",
-//           },
-//           withCredentials: true,
-//         }
-//       );
-//       console.log(response.data.success);
-      
-//       if(response.data.success===true){
-//         toast.success("Profile updated successfully!");
-//       }
-//       navigate(`/${role}?${role}_id=${_id}`);
-//     } catch (error) {
-//       console.error("Error updating profile:", error);
-//     }
-//   };
-  
-
-//   return (
-//     <div className=" bg-gray-100 p-6">
-//       <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6">
-//         <h2 className="text-3xl font-bold text-center mb-6">Edit Profile</h2>
-//         <form onSubmit={handleSubmit}>
-//           <div className="flex justify-center mb-4">
-//             <label htmlFor="profilePic" className="cursor-pointer">
-//               <img
-//                 src={formData.profilePic || "/default-profile.png"}
-//                 alt="Profile"
-//                 className="w-32 h-32 rounded-full object-cover"
-//               />
-//               <input
-//                 type="file"
-//                 id="profilePic"
-//                 name="profilePic"
-//                 accept="image/*"
-//                 onChange={handleImageChange}
-//                 className="hidden"
-//               />
-//             </label>
-//           </div>
-//           <label className="block mb-2">Name:</label>
-//           <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded mb-4" required />
-//           <label className="block mb-2">Email:</label>
-//           <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded mb-4" required />
-//           <label className="block mb-2">Phone:</label>
-//           <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded mb-4" required />
-//           <button type="submit" className="w-full bg-green-400 text-white py-2 rounded hover:bg-blue-600 transition">Save Changes</button>
-//         </form>
-//       </div>
-//       <ToastContainer/>
-//     </div>
-//   );
-// };
-
-// export default EditProfile;

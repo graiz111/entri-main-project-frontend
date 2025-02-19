@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { axiosInstance } from "../../utils/axios";
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 const AdminDelivery = () => {
-  const [Delivery, setDelivery] = useState([]);
+  const [delivery, setDelivery] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -12,13 +12,13 @@ const AdminDelivery = () => {
     name: "",
     email: "",
     phone: "",
-    isActive: "true", // Add isActive status for the delivery person
+    isActive: true,
   });
   const [newDelivery, setNewDelivery] = useState({
     name: "",
     email: "",
     phone: "",
-    role: "delivery", // Set the default role to 'delivery'
+    role: "delivery",
   });
 
   useEffect(() => {
@@ -31,7 +31,11 @@ const AdminDelivery = () => {
       const response = await axiosInstance.get('/admin/alldelivery', {
         withCredentials: true
       });
-      setDelivery(response.data);
+      if (response.data.success) {
+        setDelivery(response.data.data); 
+      } else {
+        toast.error('Failed to fetch delivery data');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error fetching Delivery');
     } finally {
@@ -45,7 +49,7 @@ const AdminDelivery = () => {
       name: delivery.name,
       email: delivery.email,
       phone: delivery.phone,
-      isActive: delivery.isActive, 
+      isActive: delivery.isActive,
     });
     setShowEditModal(true);
   };
@@ -61,24 +65,16 @@ const AdminDelivery = () => {
   const updateDelivery = async () => {
     try {
       setLoading(true);
-      const updatedData = {
-        name: editedData.name,
-        email: editedData.email,
-        phone: editedData.phone,
-        isActive: editedData.isActive, // Update status in the request
-      };
-
-      const response =await axiosInstance.put(`/admin/editallusers`, updatedData, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
-      });
-      if(response.data.success){
+      const response = await axiosInstance.put(
+        '/admin/edit-user',
+        { _id: editingDelivery._id, ...editedData, role: "delivery" },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
         toast.success('Delivery updated successfully');
         setShowEditModal(false);
         fetchDelivery();
       }
-
-      
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error updating delivery');
     } finally {
@@ -86,24 +82,40 @@ const AdminDelivery = () => {
     }
   };
 
-  
+  const addDelivery = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post(
+        '/admin/add-user',
+        { ...newDelivery, role: "delivery" },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        toast.success('Delivery added successfully');
+        setShowAddModal(false);
+        setNewDelivery({ name: "", email: "", phone: "", role: "delivery" });
+        fetchDelivery();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error adding delivery');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const deleteDelivery = async (_id) => {
     if (!window.confirm('Are you sure you want to delete this delivery?')) return;
 
     try {
       setLoading(true);
-
-      await axiosInstance.delete(`/admin/deleteuserbyadmin`, {
-        data: { _id },
+      const response = await axiosInstance.delete('/admin/delete-user', {
+        data: { _id, role: "delivery" },
         withCredentials: true
       });
-      if(response.data.success){
+      if (response.data.success) {
         toast.success('Delivery deleted successfully');
         fetchDelivery();
       }
-
-      
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error deleting delivery');
     } finally {
@@ -111,10 +123,28 @@ const AdminDelivery = () => {
     }
   };
 
+  const toggleStatus = async (_id, isActive) => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.put(
+        '/admin/toggle-user-status',
+        { id: _id, isActive: !isActive, role: "delivery" },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        toast.success('Status updated successfully');
+        fetchDelivery();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error toggling status');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6">
-      <div className=" mx-auto bg-white shadow-lg rounded-lg p-6">
+      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-gray-800">Registered Delivery Persons</h2>
           <button
@@ -125,101 +155,65 @@ const AdminDelivery = () => {
           </button>
         </div>
 
-        {/* Mobile View */}
-        <div className="md:hidden">
-          {Delivery.map((delivery) => (
-            <div key={delivery.id} className="bg-white p-4 rounded-lg shadow mb-4 border">
-              <div className="mb-2">
-                <span className="font-bold">ID:</span> {delivery._id}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Name:</span> {delivery.name}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Email:</span> {delivery.email}
-              </div>
-              <div className="mb-2">
-                <span className="font-bold">Phone:</span> {delivery.phone}
-              </div>
-              <div className="flex space-x-2 mt-3">
-                <button
-                  onClick={() => openEditModal(delivery)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteDelivery(delivery._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                >
-                  Delete
-                </button>
-              </div>
-              <div className="mb-2">
-                  <span className="font-bold ">Status:</span>
-                  <button
-                    onClick={() => toggleStatus(delivery._id, delivery.isActive)}
-                    className={`ml-2 px-2 py-1 rounded-md mt-2 ${delivery.isActive === 'true' ? 'bg-gray-200 text-green-500' : 'bg-gray-200 text-red-500'} `}
-                  >
-                    {delivery.isActive === 'true' ? 'Active' : 'Inactive'}
-                  </button>
-              </div>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-solid border-gray-200 rounded-full" role="status">
             </div>
-          ))}
-        </div>
-
-        {/* Desktop View */}
-        <div className="hidden md:block overflow-auto ">
-          <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="py-3 px-4 text-left">ID</th>
-                <th className="py-3 px-4 text-left">Person Name</th>
-                <th className="py-3 px-4 text-left">Email</th>
-                <th className="py-3 px-4 text-left">Phone</th>
-                <th className="py-3 px-4 text-center">Actions</th>
-                <th className="py-3 px-4 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Delivery.map((delivery) => (
-                <tr key={delivery.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="py-3 px-4">{delivery._id}</td>
-                  <td className="py-3 px-4">{delivery.name}</td>
-                  <td className="py-3 px-4">{delivery.email}</td>
-                  <td className="py-3 px-4">{delivery.phone}</td>
-                  <td className="py-3 px-4 text-center">
-                    <div className="flex">
-                      <button
-                        onClick={() => openEditModal(delivery)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition mr-2"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteDelivery(delivery._id)}
-                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                  <td className='py-3 px-4'>
-                    <button
-                      onClick={() => toggleStatus(delivery._id, delivery.isActive)}
-                      className={`px-4 py-2 rounded-md cursor-pointer ${delivery.isActive === 'true' ? 'bg-gray-200 text-green-500' : 'bg-gray-200 text-red-500'}`}
-                    >
-                      {delivery.isActive === 'true' ? 'Active' : 'Inactive'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {Delivery.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">No Delivery found.</p>
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        ) : (
+          <>
+            {delivery && delivery.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="py-3 px-4 text-left">ID</th>
+                      <th className="py-3 px-4 text-left">Name</th>
+                      <th className="py-3 px-4 text-left">Email</th>
+                      <th className="py-3 px-4 text-left">Phone</th>
+                      <th className="py-3 px-4 text-center">Actions</th>
+                      <th className="py-3 px-4 text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {delivery.map((delivery) => (
+                      <tr key={delivery._id} className="border-b hover:bg-gray-50 transition">
+                        <td className="py-3 px-4">{delivery._id}</td>
+                        <td className="py-3 px-4">{delivery.name}</td>
+                        <td className="py-3 px-4">{delivery.email}</td>
+                        <td className="py-3 px-4">{delivery.phone}</td>
+                        <td className="py-3 px-4 text-center">
+                          <button
+                            onClick={() => openEditModal(delivery)}
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition mr-2"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => deleteDelivery(delivery._id)}
+                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                        <td className="py-3 px-4">
+                          <button
+                            onClick={() => toggleStatus(delivery._id, delivery.isActive)}
+                            className={`px-4 py-2 rounded-md cursor-pointer ${delivery.isActive ? 'bg-gray-200 text-green-500' : 'bg-gray-200 text-red-500'}`}
+                          >
+                            {delivery.isActive ? 'Active' : 'Inactive'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 mt-4">No Delivery found.</p>
+            )}
+          </>
         )}
       </div>
 
@@ -258,8 +252,8 @@ const AdminDelivery = () => {
               onChange={handleEditInputChange}
               className="w-full border p-2 mb-3 rounded"
             >
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
+              <option value={true}>Active</option>
+              <option value={false}>Inactive</option>
             </select>
             <div className="flex justify-end space-x-2">
               <button
@@ -301,6 +295,14 @@ const AdminDelivery = () => {
               placeholder="Email"
               className="w-full border p-2 mb-3 rounded"
             />
+             <input
+              type="password"
+              name="password"
+              value={newDelivery.password}
+              onChange={handleNewDeliveryChange}
+              placeholder="password"
+              className="w-full border p-2 mb-3 rounded"
+            />
             <input
               type="tel"
               name="phone"
@@ -327,9 +329,9 @@ const AdminDelivery = () => {
           </div>
         </div>
       )}
+      <ToastContainer/>
     </div>
   );
 };
 
 export default AdminDelivery;
-

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { axiosInstance } from '../../utils/axios';
 
 const AdminRestaurant = () => {
@@ -18,6 +18,7 @@ const AdminRestaurant = () => {
     name: '',
     email: '',
     phone: '',
+    password: '', 
   });
 
   useEffect(() => {
@@ -64,40 +65,33 @@ const AdminRestaurant = () => {
 
   const updateRestaurant = async () => {
     try {
-      setLoading(true);
-      await axiosInstance.put(`/admin/restaurants/${editingRestaurant._id}`, editedData, {
-        withCredentials: true,
-      });
-
-      toast.success('Restaurant updated successfully');
+      await axiosInstance.put(
+        '/admin/edit-user', 
+        { _id: editingRestaurant._id, ...editedData,role:'restaurant' },
+        { withCredentials: true }
+      );
       setShowEditModal(false);
+      setEditingRestaurant(null);
       fetchRestaurants();
+      toast.success('Restaurant updated successfully');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error updating restaurant');
-    } finally {
-      setLoading(false);
     }
   };
 
   const addRestaurant = async () => {
     try {
-      setLoading(true);
-      await axiosInstance.post('/admin/restaurants', newRestaurant, {
-        withCredentials: true,
-      });
-
-      toast.success('Restaurant added successfully');
+      await axiosInstance.post(
+        '/admin/add-user', 
+        { ...newRestaurant, role: 'restaurant' }, 
+        { withCredentials: true }
+      );
       setShowAddModal(false);
+      setNewRestaurant({ name: '', email: '', phone: '', password: '' }); 
       fetchRestaurants();
-      setNewRestaurant({
-        name: '',
-        email: '',
-        phone: '',
-      });
+      toast.success('Restaurant added successfully');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error adding restaurant');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -105,14 +99,14 @@ const AdminRestaurant = () => {
     if (!window.confirm('Are you sure you want to delete this restaurant?')) return;
 
     try {
-      setLoading(true);
-      await axiosInstance.delete(`/admin/restaurants/${id}`, { withCredentials: true });
-      toast.success('Restaurant deleted successfully');
+      await axiosInstance.delete('/admin/delete-user', {
+        data: { _id: id, role: 'restaurant' }, 
+        withCredentials: true,
+      });
       fetchRestaurants();
+      toast.success('Restaurant deleted successfully');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error deleting restaurant');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -132,7 +126,7 @@ const AdminRestaurant = () => {
         <div className="flex justify-center items-center">
           <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-solid border-gray-200 rounded-full" role="status">
           </div>
-            <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden">Loading...</span>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,7 +154,7 @@ const AdminRestaurant = () => {
         </div>
       )}
 
-      {/* Edit Restaurant Modal */}
+  
       {showEditModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -207,7 +201,7 @@ const AdminRestaurant = () => {
         </div>
       )}
 
-      {/* Add Restaurant Modal */}
+   
       {showAddModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -226,6 +220,14 @@ const AdminRestaurant = () => {
               value={newRestaurant.email}
               onChange={handleNewRestaurantChange}
               placeholder="Email"
+              className="w-full px-4 py-2 mb-4 border rounded-md"
+            />
+            <input
+              type="password"
+              name="password"
+              value={newRestaurant.password}
+              onChange={handleNewRestaurantChange}
+              placeholder="Password"
               className="w-full px-4 py-2 mb-4 border rounded-md"
             />
             <input
@@ -253,6 +255,7 @@ const AdminRestaurant = () => {
           </div>
         </div>
       )}
+      <ToastContainer/>
     </div>
   );
 };

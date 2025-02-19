@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { axiosInstance } from '../../utils/axios';
 import io from 'socket.io-client';
+import { ToastContainer,toast } from "react-toastify";
 
 
 const socket = io(import.meta.env.VITE_BASE_URL);
@@ -26,6 +28,16 @@ const RestaurantOrders = () => {
         )
       );
     });
+    // socket.on('orderStatusUpdated', (updatedOrder) => {
+    //   console.log("Received updated order via socket:", updatedOrder);
+    //   console.log("Updated Order ID:", updatedOrder._id);
+    //   setOrders((prevOrders) => {
+    //     console.log("Previous Orders:", prevOrders);
+    //     return prevOrders.map((order) =>
+    //       order._id === updatedOrder._id ? updatedOrder : order
+    //     );
+    //   });
+    // });
 
     return () => {
       socket.off('orderStatusUpdated');
@@ -54,22 +66,51 @@ const RestaurantOrders = () => {
     }
   };
 
+  // const assignDeliveryPerson = async (orderId) => {
+  //   try {
+  //     const response = await axiosInstance.put('/orders/assign-delivery', { orderId });
+
+  //     if (response.data.success) {
+  //       console.log("Delivery person assigned successfully:", response.data.data);
+  //       return response.data; 
+  //     } else {
+  //       console.error("Failed to assign delivery person:", response.data.message);
+  //       return null; 
+  //     }
+  //   } catch (error) {
+  //     console.error("Error assigning delivery person:", error);
+  //     return null; 
+  //   }
+  // };
   const assignDeliveryPerson = async (orderId) => {
     try {
       const response = await axiosInstance.put('/orders/assign-delivery', { orderId });
-
-      if (response.data.success) {
-        console.log("Delivery person assigned successfully:", response.data.data);
-        return response.data; 
+  
+      console.log(response.data, "assignDeliveryResponse");
+  
+      if (response.data.success === true) {
+        toast.success("Delivery person assigned successfully!");
+        console.log("Delivery Person Assigned:", response.data.data);
+        return response.data;
       } else {
-        console.error("Failed to assign delivery person:", response.data.message);
-        return null; 
+        console.log("Error Condition Met");
+        console.log("Error Message:", response.data.message);
+        toast.error(response.data.message);
+        return null;
       }
     } catch (error) {
-      console.error("Error assigning delivery person:", error);
-      return null; 
+      console.error("API Call Failed:", error.response?.data || error.message);
+  
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to assign delivery person. Please try again.");
+      }
+  
+      return null;
     }
   };
+  
 
   const updateStatus = async (id, currentStatus) => {
     let newStatus = "";
@@ -162,7 +203,7 @@ const RestaurantOrders = () => {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    ${order.totalPrice ? order.totalPrice.toFixed(2) : "0.00"}
+                    Rs : {order.totalPrice ? order.totalPrice.toFixed(2) : "0.00"}
                   </td>
                   <td className="py-3 px-4">
                     {order.paymentMethod || "N/A"}
@@ -220,6 +261,7 @@ const RestaurantOrders = () => {
           No orders found for this restaurant
         </div>
       )}
+      <ToastContainer/>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { NavLink, useNavigate, useLocation, useParams } from "react-router-dom";
 import { FiSearch, FiX, FiHome, FiPhone, FiMenu } from "react-icons/fi";
@@ -41,23 +42,27 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
   const openCart = () => {
     navigate(`usercart/${_id}`);
   };
-  const Logout=async()=>{
-  
-
+  const Logout = async () => {
     try {
       const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-      console.log("entered logout user");
-      
   
       if (response.data.success) {
+       
         
-        navigate(`/`);
+        window.history.pushState(null, null, '/');
+        window.onpopstate = function() {
+          window.history.pushState(null, null, '/');
+        };
+        
+        navigate('/', { replace: true });
+        
+        
       }
     } catch (error) {
       console.error("Logout failed:", error);
+      alert("Logout failed. Please try again.");
     }
-  
-  }
+  };
 
   return (
     <div className={`${
@@ -67,12 +72,11 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
     } border-b p-3 shadow-sm fixed top-0 left-0 w-full z-50`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo and Brand Name */}
           <div className="flex items-center space-x-4">
             <img
               src={logo}
               alt="Logo"
-              className="w-10 h-10 object-contain"
+              className="w-10 h-10 object-contain rounded-full"
             />
             <h1 className="text-lg sm:text-2xl md:text-3xl font-bold hidden md:block"
               style={{
@@ -85,10 +89,9 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
             </h1>
           </div>
 
-          {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <NavLink 
-              to={`userhome`}
+              to={`/user/${_id}/${role}`}
               className={({ isActive }) => `flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'text-purple-500' 
@@ -116,7 +119,6 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
             </NavLink>
           </div>
 
-          {/* Right Section */}
           <div className="flex items-center space-x-4">
             {/* Cart Icon */}
             <div className="relative cursor-pointer" onClick={openCart}>
@@ -130,7 +132,6 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
 
             <ThemeToggle className="bg-white"/>
 
-            {/* Profile Dropdown */}
             <div className="relative">
               <img
                 src={profilepic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}

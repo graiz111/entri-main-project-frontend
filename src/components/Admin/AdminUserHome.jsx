@@ -187,7 +187,7 @@ const AdminUserHome = () => {
         setRestaurants(restaurantsResponse.data.data);
         setDeliveryPartners(deliveryPartnersResponse.data.data);
         setOrders(ordersResponse.data.data);
-        console.log(ordersResponse.data.data);
+     
         
 
         setStats([
@@ -237,8 +237,8 @@ const AdminUserHome = () => {
   }, []);
 
   return (
-    <div className={`min-h-screen pt-24 px-4 sm:px-6 lg:px-8 ${
-      theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+    <div className={`min-h-screen  px-4 sm:px-6 lg:px-8 ${
+      theme === 'dark' ? 'bg-gray-900 text-white' : ' text-gray-900'
     }`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
@@ -269,7 +269,7 @@ const AdminUserHome = () => {
         {showDeliveryPartners && <ListDisplay title="Delivery Partners List" data={deliveryPartners} theme={theme} onClose={() => setShowDeliveryPartners(false)} />}
         {showOrders && <OrdersDisplay orders={orders} theme={theme} onClose={() => setShowOrders(false)} />}
 
-        {/* Quick Actions */}
+        
         <div className={`mt-8 p-6 rounded-xl ${
           theme === 'dark' ? 'bg-gray-800' : 'bg-white'
         } shadow-lg`}>

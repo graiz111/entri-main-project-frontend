@@ -1,16 +1,13 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Search,Home,Users,ShoppingBag,Truck,Mail,Menu, LogOut} from 'lucide-react';
+import { Search, Home, Users, Menu, LogOut } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import ThemeToggle from '../../context/ThemeToggle';
-import logo from '../../assets/logo.png';
 import { axiosInstance } from '../../utils/axios';
+import logo from '../../assets/logo.png'
 
-const AdminUserHeader = ({ isOpen,setIsOpen,profilePic,_id, role, name }) => {
-
-
-
-  const navigate=useNavigate()
+const AdminUserHeader = ({ isOpen, setIsOpen, profilePic, _id, role, name }) => {
+  const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchRef = useRef(null);
@@ -36,22 +33,21 @@ const AdminUserHeader = ({ isOpen,setIsOpen,profilePic,_id, role, name }) => {
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-const Logout=async()=>{
-  
-console.log("enteredadmin logout front ");
-
-  try {
-    const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-
-    if (response.data.success) {
-      
-      navigate(`/${role}`);
+  const handleLogout = async () => {
+    try {
+      const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+      if (response.data.success) {
+        window.history.pushState(null, null, '/');
+        window.onpopstate = function() {
+          window.history.pushState(null, null, '/');
+        };
+        navigate('/admin', { replace: true });
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Logout failed. Please try again.");
     }
-  } catch (error) {
-    console.error("Logout failed:", error);
-  }
-
-}
+  };
 
   return (
     <div className={`${
@@ -61,13 +57,13 @@ console.log("enteredadmin logout front ");
     } border-b p-3 shadow-sm fixed top-0 left-0 w-full z-50`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo and Title */}
+        
           <div className="flex items-center space-x-4">
-            <img
-              src={logo}
-              alt="Logo"
-              className="w-10 h-10 object-contain"
-            />
+             <img
+                src={logo}
+                alt="Logo"
+                className="w-10 h-10 object-contain rounded-full"
+              />
             <h1 className="text-lg sm:text-2xl md:text-3xl font-bold hidden md:block"
               style={{
                 fontFamily: 'Pacifico, cursive',
@@ -79,7 +75,7 @@ console.log("enteredadmin logout front ");
             </h1>
           </div>
 
-          {/* Desktop Navigation */}
+        
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to={`/admin/user/${_id}/${role}`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
@@ -113,52 +109,62 @@ console.log("enteredadmin logout front ");
             </div>
           </div>
 
-          {/* Right Section */}
+          
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             
-            {/* Profile Dropdown */}
+        
             <div className="relative">
-              <img
-                src={profilePic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
-                alt="Profile"
-                className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-colors ${
-                  theme === 'dark'  
-                    ? 'border-gray-600 hover:border-gray-500'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
+              <button
                 onClick={toggleDropdown}
-              />
-                {isOpen && (
-                  <div className="relative">
-                    <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
-                      theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
-                    }`}>
-                      <NavLink to="/admin/coupons">
-                        <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
-                          theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
-                        }`}>
-                          <Users className="h-4 w-4 mr-2" />
-                          Add Coupons
-                        </div>
-                      </NavLink>
-                      
-                      <div
-                        className={`flex items-center px-4 py-2 text-sm cursor-pointer hover:bg-opacity-20 ${
-                          theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                        onClick={() => Logout()} 
-                      >
-                        <LogOut className="h-4 w-4 mr-2"/>
-                        Logout
-                      </div>
-                    </div>
-                  </div>
-                )}
+                className="focus:outline-none"
+              >
+                <img
+                  src={profilePic || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png"}
+                  alt="Profile"
+                  className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-colors ${
+                    theme === 'dark'  
+                      ? 'border-gray-600 hover:border-gray-500'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                />
+              </button>
 
+              {isOpen && (
+                <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
+                  theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+                }`}>
+                  <NavLink to={"addcoupons"}>
+                    <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                    }`}>
+                      <Users className="h-4 w-4 mr-2" />
+                      Add Coupons
+                    </div>
+                  </NavLink>
+                  <NavLink to={"editprofile"}>
+                    <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                    }`}>
+                      <Users className="h-4 w-4 mr-2" />
+                     Edit Profile
+                    </div>
+                  </NavLink>
+                  
+                  <button
+                    onClick={handleLogout}
+                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+                      theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <LogOut className="h-4 w-4 mr-2"/>
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Mobile Menu Button */}
+          
             <button
               className="md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -171,7 +177,7 @@ console.log("enteredadmin logout front ");
         </div>
       </div>
 
-      {/* Mobile Menu */}
+ 
       {isMobileMenuOpen && (
         <div className={`md:hidden border-t ${
           theme === 'dark'  
@@ -195,7 +201,7 @@ console.log("enteredadmin logout front ");
                 }`}
               />
             </div>
-            <NavLink to="/admin">
+            <NavLink to={`/admin/user/${_id}/${role}`}>
               <div className={`px-4 py-2 text-sm rounded-lg ${
                 theme === 'dark'  
                   ? 'text-gray-200 hover:bg-gray-700'
@@ -205,6 +211,7 @@ console.log("enteredadmin logout front ");
           </div>
         </div>
       )}
+      
     </div>
   );
 };

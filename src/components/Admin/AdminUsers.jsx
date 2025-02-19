@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {axiosInstance} from '../../utils/axios';
+import { ToastContainer,toast } from 'react-toastify';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -72,8 +73,8 @@ const AdminUsers = () => {
 
     try {
       await axiosInstance.delete('/admin/delete-user', {
-        data: { _id },
-        withCredentials: true,
+        data: { _id , role:'user',},
+       
       });
       fetchUsers();
     } catch (err) {
@@ -89,7 +90,7 @@ const AdminUsers = () => {
     try {
       await axiosInstance.post(
         '/admin/add-user',
-        { ...newUser },
+        { ...newUser, role:'user', },
         { withCredentials: true }
       );
       setShowAddUserModal(false);
@@ -103,7 +104,8 @@ const AdminUsers = () => {
     try {
       await axiosInstance.put(
         '/admin/toggle-user-status',
-        { id, isActive: !isActive },
+        { id, isActive: !isActive, role:"user" },
+       
         { withCredentials: true }
       );
       setUsers((prev) =>
@@ -138,7 +140,6 @@ const AdminUsers = () => {
                 <th className="py-3 px-4 text-left">Email</th>
                 <th className="py-3 px-4 text-left">Phone</th>
                 <th className="py-3 px-4 text-left">Role</th>
-                <th className="py-3 px-4 text-center">Status</th>
                 <th className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
@@ -150,16 +151,7 @@ const AdminUsers = () => {
                   <td className="py-3 px-4">{user.email}</td>
                   <td className="py-3 px-4">{user.phone}</td>
                   <td className="py-3 px-4">{user.role}</td>
-                  <td className="py-3 px-4 text-center">
-                    <button
-                      onClick={() => toggleActiveStatus(user._id, user.isActive)}
-                      className={`px-4 py-1 rounded-md ${
-                        user.isActive ? 'bg-green-500' : 'bg-red-500'
-                      } text-white`}
-                    >
-                      {user.isActive ? 'Active' : 'Inactive'}
-                    </button>
-                  </td>
+               
                   <td className="py-3 px-4 text-center">
                     <button
                       onClick={() => openEditForm(user)}
@@ -185,7 +177,7 @@ const AdminUsers = () => {
         )}
       </div>
 
-      {/* Add User Modal */}
+
       {showAddUserModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
@@ -210,7 +202,13 @@ const AdminUsers = () => {
               placeholder="Phone"
               onChange={handleNewUserChange}
               className="w-full border p-2 mb-3 rounded"
-            />
+            />  <input
+            type="text"
+            name="password"
+            placeholder="password"
+            onChange={handleNewUserChange}
+            className="w-full border p-2 mb-3 rounded"
+          />
             <input
               type="text"
               name="role"
@@ -236,7 +234,7 @@ const AdminUsers = () => {
         </div>
       )}
 
-      {/* Edit User Modal */}
+    
       {showEditModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
@@ -286,6 +284,7 @@ const AdminUsers = () => {
           </div>
         </div>
       )}
+      <ToastContainer/>
     </div>
   );
 };

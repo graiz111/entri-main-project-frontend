@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import Footer from "../components/Main/Footer";
+
 import RestaurantUserHeader from "../components/Restaurant/RestaurantUserHeader";
-import { useRestaurantAuth } from "../context/RestaurantAuthContext";
+
 import { axiosInstance } from '../utils/axios';
 import { useParams } from "react-router-dom";
 

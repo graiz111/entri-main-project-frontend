@@ -20,17 +20,17 @@ const UseresMenu = () => {
     const [cart, setCart] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [cartTotal, setCartTotal] = useState(0);
+    
      useEffect(() => {
         window.scrollTo(0, 0);
       }, []);
+
     useEffect(() => {
         const fetchRestaurantData = async () => {
             try {
-                // Fetch restaurant details
                 const restaurantResponse = await axiosInstance.get(`/restaurant/getsingleres/${restaurant_id}`);
                 setRestaurant(restaurantResponse.data.data);
 
-                // Fetch menu items for this restaurant
                 const menuResponse = await axiosInstance.get(`/restaurantadd/getallitemsuser/${restaurant_id}`);
                 setMenuItems(menuResponse.data.data);
                 console.log(menuResponse.data.data);
@@ -66,7 +66,6 @@ const UseresMenu = () => {
     
                 console.log("Post Data for Cart:", postData);
     
-                // Add item to cart
                 const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
     
                 if (cartResponse.data.success === true) {
@@ -109,7 +108,6 @@ const UseresMenu = () => {
         <div className={`min-h-screen ${
             theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
         }`}>
-            {/* Restaurant Header */}
             <div className={`w-full py-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
                 <div className="container mx-auto px-4">
                     <button 
@@ -145,9 +143,7 @@ const UseresMenu = () => {
                 </div>
             </div>
 
-            {/* Menu Section */}
             <div className="container mx-auto px-4 py-8">
-                {/* Categories */}
                 <div className="flex gap-2 overflow-x-auto mb-8 pb-2">
                     {categories.map(category => (
                         <button
@@ -202,7 +198,6 @@ const UseresMenu = () => {
                 </div>
             </div>
 
-            {/* Cart Sidebar - Fixed position */}
             {cart.length > 0 && (
                 <div className={`fixed bottom-0 left-0 right-0 ${
                     theme === 'dark' ? 'bg-gray-800' : 'bg-white'

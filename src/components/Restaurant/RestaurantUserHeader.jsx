@@ -50,21 +50,33 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
       document.head.removeChild(link);
     };
   }, []);
-  const LogOut=async()=>{
-   
-
+  const LogOut = async () => {
     try {
       const response = await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
   
       if (response.data.success) {
-       
-        navigate(`/`);
+        // Clear any client-side state if you're using it
+        // For example, if using context: setUserContext(null);
+        // Or if using Redux: dispatch(clearUserState());
+        
+        // Disable browser back navigation for this session
+        window.history.pushState(null, null, '/');
+        window.onpopstate = function() {
+          window.history.pushState(null, null, '/');
+        };
+        
+        // Navigate to home page with replace (prevents back navigation)
+        navigate('/restaurant', { replace: true });
+        
+        // Force reload to clear any cached states
+        // window.location.reload(); // Uncomment if needed
       }
     } catch (error) {
       console.error("Logout failed:", error);
+      // Show error notification to user
+      alert("Logout failed. Please try again.");
     }
-
-  }
+  };
 
 
   
@@ -80,11 +92,11 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 ">
             <img
               src={logo}
               alt="Logo"
-              className="w-10 h-10 object-contain"
+              className="w-10 h-10 object-contain rounded-full"
             />
             <h1 className="text-lg sm:text-2xl md:text-3xl font-bold hidden md:block"
               style={{
@@ -99,7 +111,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
 
 
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to={`/restaurant?restaurant_id=${_id}`}>
+            <NavLink to={`/restaurant/user/${_id}/${role}`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                 theme === 'dark'   
                   ? 'hover:bg-gray-700 text-gray-200' 
@@ -109,16 +121,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
                 <span>Home</span>
               </button>
             </NavLink>
-            <NavLink to="/restaurant/contact-us">
-              <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                theme === 'dark'   
-                  ? 'hover:bg-gray-700 text-gray-200' 
-                  : 'hover:bg-gray-100 text-gray-700'
-              }`}>
-                <FiPhone className="h-4 w-4" />
-                <span>Contact</span>
-              </button>
-            </NavLink>
+           
             
 
             <div className="relative">

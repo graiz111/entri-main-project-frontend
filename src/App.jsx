@@ -1,26 +1,18 @@
 import React from "react";
 import Routess from "./routes/Routess";
 import { ThemeProvider } from "./context/ThemeContext";
-import { ToastContainer } from "react-toastify";
+import { CartProvider } from './context/CartContext';
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <ThemeProvider>
-      <>
+      <CartProvider>
+
         <Routess />
-{/* 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          pauseOnHover
-          draggable
-          theme="light"
-        /> */}
-      </>
+        
+      </CartProvider>
+  
     </ThemeProvider>
   );
 }

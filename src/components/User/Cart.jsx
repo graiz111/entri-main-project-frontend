@@ -8,20 +8,27 @@ import { toast, ToastContainer } from "react-toastify";
 const Cart = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
-  const [cartId, setcartid] = useState(null)
+  const [cartId, setcartid] = useState(null);
   const { theme } = useContext(ThemeContext);
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const [couponSuccess, setCouponSuccess] = useState("");
+  const [discountedTotal, setDiscountedTotal] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const fetchCart = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`/cart/cart/${userId}`);
-      setCart(response.data.data);
-      setcartid(response.data.data._id)
-      
-      
+      setCart(response.data?.data);
+      setcartid(response.data.data?._id);
+      setDiscountedTotal(response.data.data?.totalPrice);
     } catch (error) {
       console.error("Error fetching cart:", error);
       setError("Failed to load cart items");
@@ -36,8 +43,8 @@ const Cart = () => {
       fetchCart();
     }
   }, [userId]);
-  
-  const updateQuantity = async (cartItemId,newquantity) => {
+
+  const updateQuantity = async (cartItemId, newquantity) => {
     try {
       const response = await axiosInstance.put(`/cart/update/${cartItemId}`, {
         userId,
@@ -45,7 +52,7 @@ const Cart = () => {
       });
 
       if (response.data.success) {
-        fetchCart(); 
+        fetchCart();
       } else {
         toast.error("Failed to update quantity");
       }
@@ -72,6 +79,56 @@ const Cart = () => {
       toast.error("Failed to remove item");
     }
   };
+
+  const handleApplyCoupon = async () => {
+    try {
+      setCouponError("");
+      setCouponSuccess("");
+  
+     
+      const couponResponse = await axiosInstance.post("/admin/couponsvalidate", {
+        code: couponCode,
+        cartTotal: cart.totalPrice,
+      });
+  
+      console.log("Coupon Validation Response:", couponResponse.data);
+  
+      if (couponResponse.data.success) {
+        const discount = couponResponse.data.discountPercentage;
+        const discountAmount = (cart.totalPrice * discount) / 100;
+        const newTotal = cart.totalPrice - discountAmount;
+  
+        
+        const updateResponse = await axiosInstance.put("/cart/updateamount", {
+          cartId,
+          amount: newTotal,
+        });
+  
+        console.log("Cart Update Response:", updateResponse.data);
+  
+        if (updateResponse.data.success) {
+          setDiscountedTotal(newTotal);
+          setCouponSuccess(`Applied ${discount}% discount`);
+          toast.success(`Coupon applied successfully! Saved ₹${discountAmount.toFixed(2)}`);
+        } else {
+          console.log("Cart Update Failed:", updateResponse.data.message);
+          toast.error(updateResponse.data.message);
+        }
+      } else {
+        console.log("Coupon Validation Failed:", couponResponse.data.message);
+        toast.error(couponResponse.data.message);
+      }
+    } catch (error) {
+      console.error("API Call Failed:", error.response?.data || error.message);
+  
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Invalid coupon code or failed to apply discount.");
+      }
+    }
+  };
+  
 
   if (loading) {
     return (
@@ -173,21 +230,54 @@ const Cart = () => {
               ))}
             </div>
 
+            <div className="mt-6 border-t pt-4">
+              <div className="flex flex-col space-y-2">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter coupon code"
+                    className={`flex-1 p-2 rounded-lg ${
+                      theme === 'dark' 
+                        ? 'bg-gray-700 text-white' 
+                        : 'bg-gray-100 text-gray-900'
+                    }`}
+                  />
+                  <button
+                    onClick={handleApplyCoupon}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    Apply
+                  </button>
+                </div>
+                
+                {couponError && (
+                  <p className="text-red-500 text-sm">{couponError}</p>
+                )}
+                {couponSuccess && (
+                  <p className="text-green-500 text-sm">{couponSuccess}</p>
+                )}
+              </div>
+            </div>
+
             <div className="mt-4 text-right">
+              {discountedTotal !== cart.totalPrice && (
+                <p className="text-sm line-through text-gray-500">
+                  Original: Rs.{cart.totalPrice.toFixed(2)}
+                </p>
+              )}
               <p className="text-lg font-bold">
-                Total: Rs.{cart.totalPrice.toFixed(2)}
+                Total: Rs.{(discountedTotal || cart.totalPrice).toFixed(2)}
               </p>
             </div>
 
             <div className="mt-4">
-             <NavLink to={`/user/${userId}/user/checkout/${userId}`}>
-             <button
-               
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition-colors"
-              >
-                Proceed to Checkout
-              </button>
-             </NavLink>
+              <NavLink to={`/user/${userId}/user/checkout/${userId}/${cartId}`}>
+                <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition-colors">
+                  Proceed to Checkout
+                </button>
+              </NavLink>
             </div>
           </>
         )}

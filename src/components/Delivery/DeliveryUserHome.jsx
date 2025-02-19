@@ -6,19 +6,72 @@ import {
   FaTachometerAlt, FaClipboardList, FaClock,
   FaChevronRight, FaPhoneAlt
 } from 'react-icons/fa';
+import { useParams } from "react-router-dom";
+import { axiosInstance } from "../../utils/axios.js"; 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Assuming you have these images in your assets folder
-import delpic2 from '../../assets/delpic2.jpeg';
-import respic1 from '../../assets/respic1.avif';
-import respic2 from '../../assets/respic2.avif';
 import respic3 from '../../assets/respic3.avif';
 
-const DeliveryUserHome = ({name}) => {
+const DeliveryUserHome = ({ name, userId }) => {
+  const { _id, role } = useParams(); 
   const { theme } = useContext(ThemeContext);
   const [isOnline, setIsOnline] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
-  
-  // Mock data for a logged-in delivery partner
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axiosInstance.get(`/delivery/currentstatus`, {
+          params: { _id: _id }
+        });
+        
+        if (response.data.success) {
+          setIsOnline(response.data.isDelivery);
+        } else {
+          toast.error(response.data.message || "Failed to fetch status");
+        }
+      } catch (error) {
+        console.error("Error fetching delivery status:", error);
+        toast.error("Failed to fetch delivery status");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (_id) {
+      fetchStatus();
+    }
+  }, [_id]);
+
+  const handleToggle = async () => {
+    try {
+      setIsLoading(true);
+      const newStatus = !isOnline;
+      
+      const response = await axiosInstance.put("/delivery/update-status", {
+        userId: _id,
+        status: newStatus ? "online" : "offline"
+      });
+
+      if (response.data.success) {
+        setIsOnline(newStatus);
+        toast.success(`Status updated to ${newStatus ? 'online' : 'offline'}`);
+      } else {
+        toast.error(response.data.message || "Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update delivery status");
+     
+      setIsOnline(!isOnline);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const userData = {
     name: "John Smith",
     rating: 4.8,
@@ -28,7 +81,6 @@ const DeliveryUserHome = ({name}) => {
     profilePic: respic3
   };
 
-  // Mock data for upcoming/current deliveries
   const currentDeliveries = [
     {
       id: "ORD39485",
@@ -41,7 +93,6 @@ const DeliveryUserHome = ({name}) => {
     }
   ];
 
-  // Mock data for past deliveries
   const pastDeliveries = [
     {
       id: "ORD39484",
@@ -70,29 +121,26 @@ const DeliveryUserHome = ({name}) => {
   ];
 
   return (
-    <div className={` flex flex-col  ${theme === 'dark' ? 'bg-gray-900 text-white' : ' text-gray-800'}`}>
+    <div className={`flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white' : 'text-gray-800'}`}>
      
-      
-    
+      <header className={`md:hidden flex items-center justify-between p-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
+        <button onClick={() => setShowSidebar(true)}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <h1 className="text-lg font-bold">Foodie Buddie</h1>
+        <img 
+          src={userData.profilePic} 
+          alt="Profile" 
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      </header>
+
       <div className="flex-1 container mx-auto relative">
-        {/* Mobile Header */}
-        <header className={`md:hidden flex items-center justify-between p-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md `}>
-          <button onClick={() => setShowSidebar(true)}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-          <h1 className="text-lg font-bold">Foodie Buddie</h1>
-          <img 
-            src={userData.profilePic} 
-            alt="Profile" 
-            className="w-8 h-8 rounded-full object-cover"
-          />
-        </header>
-        
-        {/* Dashboard Content */}
+     
         <main className="p-4 md:p-6">
-          {/* Online/Offline Toggle */}
+      
           <div className={`p-4 rounded-lg shadow-md mb-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="flex items-center justify-between">
               <div>
@@ -102,20 +150,29 @@ const DeliveryUserHome = ({name}) => {
                 </p>
               </div>
               <div className="flex items-center">
-                <span className={`mr-2 ${isOnline ? 'text-green-500' : theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {isOnline ? 'Online' : 'Offline'}
+                <span className={`mr-2 ${
+                  isOnline ? "text-green-500" : theme === "dark" ? "text-gray-400" : "text-gray-500"
+                }`}>
+                  {isLoading ? "Updating..." : isOnline ? "Online" : "Offline"}
                 </span>
-                <button 
-                  onClick={() => setIsOnline(!isOnline)}
-                  className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ease-in-out ${isOnline ? 'bg-green-500 justify-end' : theme === 'dark' ? 'bg-gray-600 justify-start' : 'bg-gray-300 justify-start'}`}
+                <button
+                  onClick={handleToggle}
+                  disabled={isLoading}
+                  className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ease-in-out ${
+                    isLoading ? "opacity-50 cursor-not-allowed" : ""
+                  } ${
+                    isOnline ? "bg-green-500 justify-end" : theme === "dark" ? "bg-gray-600 justify-start" : "bg-gray-300 justify-start"
+                  }`}
                 >
-                  <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out`}></div>
+                  <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${
+                    isLoading ? "animate-pulse" : ""
+                  }`}></div>
                 </button>
               </div>
             </div>
           </div>
-          
-          {/* Summary Cards */}
+
+    
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className={`p-4 rounded-lg shadow-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex items-center justify-between">
@@ -128,7 +185,7 @@ const DeliveryUserHome = ({name}) => {
                 </div>
               </div>
             </div>
-            
+
             <div className={`p-4 rounded-lg shadow-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex items-center justify-between">
                 <div>
@@ -140,7 +197,7 @@ const DeliveryUserHome = ({name}) => {
                 </div>
               </div>
             </div>
-            
+
             <div className={`p-4 rounded-lg shadow-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex items-center justify-between">
                 <div>
@@ -152,7 +209,7 @@ const DeliveryUserHome = ({name}) => {
                 </div>
               </div>
             </div>
-            
+
             <div className={`p-4 rounded-lg shadow-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex items-center justify-between">
                 <div>
@@ -168,14 +225,14 @@ const DeliveryUserHome = ({name}) => {
               </div>
             </div>
           </div>
-          
-          
+
+         
           <div className={`p-4 rounded-lg shadow-md mb-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
             <h2 className="text-xl font-semibold mb-4">Current Deliveries</h2>
             
             {currentDeliveries.length > 0 ? (
               <div className="space-y-4">
-                {currentDeliveries.map((delivery, index) => (
+                {currentDeliveries.map((delivery) => (
                   <div 
                     key={delivery.id}
                     className={`p-4 rounded-lg border ${theme === 'dark' ? 'border-gray-700 bg-gray-700' : 'border-gray-200 bg-gray-50'}`}
@@ -198,7 +255,7 @@ const DeliveryUserHome = ({name}) => {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-col sm:flex-row justify-between">
                       <div className="mb-3 sm:mb-0">
                         <p className="text-sm font-medium">Customer: {delivery.customerName}</p>
@@ -209,7 +266,7 @@ const DeliveryUserHome = ({name}) => {
                           {delivery.time}
                         </p>
                       </div>
-                      
+
                       <div className="flex space-x-2">
                         <button className={`px-3 py-2 rounded-lg text-sm ${theme === 'dark' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-600 hover:bg-orange-700'} text-white`}>
                           Accept
@@ -231,24 +288,20 @@ const DeliveryUserHome = ({name}) => {
               </div>
             )}
           </div>
-          
-          {/* Recent Deliveries */}
+
+     
           <div className={`p-4 rounded-lg shadow-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
             <h2 className="text-xl font-semibold mb-4">Recent Deliveries</h2>
             
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-700">
-                <thead>
+            <div className="overflow-x-auto">               <table className="min-w-full divide-y divide-gray-700">                 <thead>
                   <tr>
                     <th className={`px-4 py-3 text-left text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                       Order
                     </th>
-                    <th className={`px-4 py-3 text-left text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
-                      Customer
+                    <th className={`px-4 py-3 text-left text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>                       Customer
                     </th>
                     <th className={`px-4 py-3 text-left text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
-                      Time
-                    </th>
+                      Time                     </th>
                     <th className={`px-4 py-3 text-left text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                       Amount
                     </th>
@@ -311,11 +364,12 @@ const DeliveryUserHome = ({name}) => {
           </div>
         </main>
         
-        {/* Support Floating Button */}
+        
         <button className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg ${theme === 'dark' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-600 hover:bg-orange-700'} text-white z-10`}>
           <FaPhoneAlt />
         </button>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

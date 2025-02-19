@@ -1,7 +1,7 @@
 
 import React,{useEffect,useState} from 'react';
 import { axiosInstance } from '../utils/axios';
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter,  RouterProvider, useNavigate } from 'react-router-dom';
 
 // Layouts
 import MainLayout from '../layouts/MainLayout';
@@ -50,53 +50,118 @@ import Success from '../components/common/Success';
 import Failure from '../components/common/Failure';
 import DeliveryUserLayout from '../layouts/DeliveryUserLayout';
 import DeliveryUserHome from '../components/Delivery/DeliveryUserHome';
+import SuccessPage from '../components/common/SuccessPage';
+import Unauthorized from '../components/common/Unauthorised';
+import CouponManagement from '../components/Admin/AdminCoupon';
 
 
 
+
+// const ProtectedRoute = ({ children, allowedRoles }) => {
+//   const [auth, setAuth] = useState(null);
+//   const navigate = useNavigate(); // Assuming you're using react-router
+
+//   useEffect(() => {
+//     const verifyToken = async () => {
+//       try {
+//         const response = await axiosInstance.get("/auth/verify-token");
+        
+//         if (response.data.success) {
+//           const userRole = response.data.role;
+          
+//           if (allowedRoles.includes(userRole)) {
+//             setAuth(true);
+//           } else {
+//             setAuth(false);
+//             navigate('/unauthorized'); // Redirect to unauthorized page
+//           }
+//         } else {
+//           setAuth(false);
+//           navigate('/'); // Redirect to login
+//         }
+//       } catch (error) {
+//         setAuth(false);
+//         navigate('/'); // Redirect to login on error
+//       }
+//     };
+    
+//     verifyToken();
+//   }, [allowedRoles, navigate]);
+
+//   if (auth === null) {
+//     return <div>Loading...</div>; // Or a nicer loading component
+//   }
+
+//   return auth ? children : null;
+// };
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const [auth, setAuth] = useState(null);
+  const navigate = useNavigate();
 
-
-  useEffect(() => {
-    const verifyToken = async () => {
-      try {
-        const response = await axiosInstance.get("/auth/verify-token");
-
-        if (response.data.success) {
-          const userRole = response.data.role; // Get role from API
-         
-
-          // Check if the role is allowed
-          if (allowedRoles.includes(userRole)) {
-            setAuth(true);
-          } else {
-            setAuth(false);
-          }
+  const verifyToken = async () => {
+    try {
+      const response = await axiosInstance.get("/auth/verify-token");
+      
+      if (response.data.success) {
+        const userRole = response.data.role;
+        
+        if (allowedRoles.includes(userRole)) {
+          setAuth(true);
         } else {
           setAuth(false);
+          navigate('/unauthorized', { replace: true });
         }
-      } catch (error) {
+      } else {
         setAuth(false);
+        navigate('/unauthorized', { replace: true });
+        // navigate('/', { replace: true });
+      }
+    } catch (error) {
+      console.error("Token verification failed:", error);
+      setAuth(false);
+      navigate('/', { replace: true });
+    }
+  };
+
+  useEffect(() => {
+    verifyToken();
+    
+    const handleFocus = () => verifyToken();
+    window.addEventListener('focus', handleFocus);
+    
+ 
+    const handlePopState = () => verifyToken();
+    window.addEventListener('popstate', handlePopState);
+    
+  
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+       
+        verifyToken();
       }
     };
+    window.addEventListener('pageshow', handlePageShow);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, [allowedRoles, navigate]);
 
-    verifyToken();
-  }, [allowedRoles]); // ✅ Add dependencies
-
+  
   if (auth === null) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Verifying authentication...</p>
       </div>
     );
   }
 
-  return auth ? children : <Navigate to="/" />;
+  return auth ? children : null;
 };
-
-
-
 
 
 
@@ -111,8 +176,10 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
       { path: "about-us", element: <AboutUs /> },
+      { path: "unauthorized", element: <Unauthorized /> },
       { path: "user/:userId/user/payment/success", element: <Success /> },
       { path: "user/payment/cancel", element: <Failure /> },
+      { path: "order/success/:orderId/:userId", element: <SuccessPage /> },
     ],
   },
   {
@@ -126,7 +193,7 @@ const router = createBrowserRouter([
       { path: "usercart/:userId", element: <ProtectedRoute allowedRoles={["user"]}><Cart /></ProtectedRoute> },
       { path: "addaddress", element: <ProtectedRoute allowedRoles={["user"]}><UserAddress /></ProtectedRoute> },
       { path: "editprofile", element: <ProtectedRoute allowedRoles={["user"]}><EditProfile /></ProtectedRoute> },
-      { path: "checkout/:userId", element: <ProtectedRoute allowedRoles={["user"]}><CheckOut /></ProtectedRoute> },
+      { path: "checkout/:userId/:cartId", element: <ProtectedRoute allowedRoles={["user"]}><CheckOut /></ProtectedRoute> },
     
       { path: "contact-us", element: <ContactUs /> },
       { path: "about-us", element: <AboutUs /> },
@@ -147,7 +214,7 @@ const router = createBrowserRouter([
           { path: "admrestaurant", element: <AdminRestaurant />},
           { path: "admusers", element: <AdminUsers />},
           { path: "admdelivery", element: <AdminDelivery />},
-          // { path: "admdedit", element: <AdminEdit />},
+          { path: "addcoupons", element: <CouponManagement />},
           { path: "editprofile", element: <EditProfile />},
           { path: "about-us", element: <AboutUs /> },
         ],
