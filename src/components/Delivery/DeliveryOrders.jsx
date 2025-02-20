@@ -4,15 +4,17 @@ import io from 'socket.io-client';
 import { useLocation } from "react-router-dom";
 import { ThemeContext } from '../../context/ThemeContext';
 
-// Create socket connection with the server
-const socket = io(import.meta.env.VITE_BASE_URL);
 
-// Helper function to safely get order ID
+const socket = io(import.meta.env.VITE_BASE_URL, {
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000
+});
+
 const getOrderId = (order) => {
   return order._id || order.orderId || "unknown";
 };
 
-// Helper function to safely get a short ID
 const getShortId = (order, length = 6) => {
   const id = getOrderId(order);
   return typeof id === 'string' && id.length > length
@@ -32,7 +34,6 @@ const DeliveryOrders = () => {
   useEffect(() => {
     fetchOrders();
 
-    // Listen for order status updates from Socket.IO
     socket.on('orderStatusUpdated', (updatedOrder) => {
       ("Received updated order via socket:", updatedOrder);
       setOrders((prevOrders) =>
@@ -52,9 +53,8 @@ const DeliveryOrders = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch orders assigned to the delivery person
       const response = await axiosInstance.get(`/orders/delivery-orders`, {
-        params: { delivery_id }, // Pass delivery_id as a query parameter
+        params: { delivery_id }, 
       });
 
       if (response.data.success) {
@@ -74,13 +74,11 @@ const DeliveryOrders = () => {
   const updateStatus = async (order, newStatus) => {
     const orderId = getOrderId(order);
     try {
-      // Emit the status update to the server via Socket.IO
       socket.emit('updateOrderStatus', { 
         orderId, 
         newStatus
       });
 
-      // Optimistically update the local state
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           getOrderId(order) === orderId ? { ...order, status: newStatus } : order
@@ -123,7 +121,6 @@ const DeliveryOrders = () => {
     );
   }
 
-  // Separate active and completed orders
   const activeOrders = orders.filter((order) => 
     order.status === "Assigned to Delivery Boy" || order.status === "Out for Delivery"
   );
@@ -137,7 +134,6 @@ const DeliveryOrders = () => {
         Delivery Orders
       </h1>
 
-      {/* Active Orders Section */}
       <div className="mb-12">
         <h2 className={`text-xl md:text-2xl font-bold mb-4 ${
           theme === 'dark' ? 'text-purple-400' : 'text-purple-600'
@@ -206,7 +202,6 @@ const DeliveryOrders = () => {
         )}
       </div>
 
-      {/* Completed Orders Section */}
       <div>
         <h2 className={`text-xl md:text-2xl font-bold mb-4 ${
           theme === 'dark' ? 'text-green-400' : 'text-green-600'
@@ -231,7 +226,6 @@ const DeliveryOrders = () => {
                   <th className="py-3 px-4 text-left">Address</th>
                   <th className="py-3 px-4 text-left">Payment</th>
                   <th className="py-3 px-4 text-left">Total</th>
-                  {/* <th className="py-3 px-4 text-left">Items</th> */}
                 </tr>
               </thead>
               <tbody className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>

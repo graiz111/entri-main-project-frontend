@@ -6,7 +6,12 @@ import io from 'socket.io-client';
 import { ToastContainer,toast } from "react-toastify";
 
 
-const socket = io(import.meta.env.VITE_BASE_URL);
+
+const socket = io(import.meta.env.VITE_BASE_URL, {
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000
+});
 
 const RestaurantOrders = () => {
   const [orders, setOrders] = useState([]);

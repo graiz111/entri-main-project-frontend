@@ -12,8 +12,12 @@ import {
   XCircle
 } from 'lucide-react';
 
-const socket = io(import.meta.env.VITE_BASE_URL);
 
+const socket = io(import.meta.env.VITE_BASE_URL, {
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000
+});
 const UserOrders = () => {
   const { theme } = useContext(ThemeContext);
   const [orders, setOrders] = useState([]);
