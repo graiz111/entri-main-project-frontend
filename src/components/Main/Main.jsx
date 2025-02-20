@@ -9,29 +9,12 @@ import respic3 from '../../assets/respic3.avif'
 
 const Main = () => {
   const { theme } = useContext(ThemeContext);
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState([          { id: 1, code: 'WELCOME25', discount: '25% Off', minOrder: 500, validity: '31 May 2025' },
+                                                    { id: 2, code: 'FREESHIP', discount: 'Free Delivery', minOrder: 300, validity: '15 Mar 2025' },
+                                                    { id: 3, code: 'FOOD10', discount: '10% Off', minOrder: 200, validity: '10 Apr 2025' }]);
   const [copied, setCopied] = useState(null);
 
 
-  useEffect(() => {
-    const fetchCoupons = async () => {
-      try {
-        const response = await fetch('your-api-endpoint/coupons');
-        const data = await response.json();
-        setCoupons(data.coupons || []);
-      } catch (error) {
-        console.error('Failed to fetch coupons:', error);
-      
-        setCoupons([
-          { id: 1, code: 'WELCOME25', discount: '25% Off', minOrder: 500, validity: '31 May 2025' },
-          { id: 2, code: 'FREESHIP', discount: 'Free Delivery', minOrder: 300, validity: '15 Mar 2025' },
-          { id: 3, code: 'FOOD10', discount: '10% Off', minOrder: 200, validity: '10 Apr 2025' }
-        ]);
-      }
-    };
-
-    fetchCoupons();
-  }, []);
 
   const handleCopyClick = (id, code) => {
     navigator.clipboard.writeText(code)

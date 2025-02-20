@@ -103,14 +103,14 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     try {
       const response = await axiosInstance.get("/auth/verify-token");
       
-      if (response.data.success) {
+      if (response.data.success  ) {
         const userRole = response.data.role;
         
         if (allowedRoles.includes(userRole)) {
           setAuth(true);
         } else {
           setAuth(false);
-          navigate('/unauthorized', { replace: true });
+          navigate('/unauthorized');
         }
       } else {
         setAuth(false);
@@ -118,9 +118,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
         // navigate('/', { replace: true });
       }
     } catch (error) {
+      
       console.error("Token verification failed:", error);
       setAuth(false);
-      navigate('/', { replace: true });
+      // navigate('/', { replace: true });
     }
   };
 

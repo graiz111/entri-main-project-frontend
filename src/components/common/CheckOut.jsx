@@ -67,7 +67,7 @@ const CheckOut = () => {
   
   const navigateToAddAddress = () => {
     
-    navigate(`addaddress?user_id=${userId}`); 
+    navigate(`/user/${userId}/user/addaddress?user_id=${userId}`); 
   };
 
   const handlePlaceOrder = async (totalPrice) => {

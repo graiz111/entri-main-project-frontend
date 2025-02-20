@@ -165,12 +165,14 @@ const userId = params.get('user_id');
     if (!window.confirm('Are you sure you want to delete this address?')) {
       return;
     }
+   
     
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post('/user/addresses', {
-        
-        address_id: addressId
+      const response = await axiosInstance.delete('/user/deladdresses', {
+          data: { addressId: addressId }, 
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
       });
       
       if (response.data.success) {
