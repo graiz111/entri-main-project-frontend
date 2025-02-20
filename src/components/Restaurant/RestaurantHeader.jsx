@@ -84,7 +84,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen}) => {
 
        
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to={`/restaurant`}>
+            <NavLink to={`/`}>
               <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                 theme === 'dark'   
                   ? 'hover:bg-gray-700 text-gray-200' 
@@ -170,7 +170,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen}) => {
                 : 'bg-gray-100'
             }`}>
             </div>
-            <NavLink to="/restaurant">
+            <NavLink to="/">
               <div className={`px-4 py-2 text-sm rounded-lg ${
                 theme === 'dark'  
                   ? 'text-gray-200 hover:bg-gray-700'

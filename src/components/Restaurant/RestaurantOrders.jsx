@@ -54,14 +54,32 @@ const RestaurantOrders = () => {
       setLoading(true);
       setError(null);
 
-    
-      const response = await axiosInstance.get(`/orders/restaurant-orders/${restaurantId}`);
-
-      if (response.data.success) {
-        setOrders(response.data.data);
-        ("Fetched orders:", response.data.data);
-      } else {
-        setError("Failed to fetch orders. Please try again.");
+      try {
+        const response = await axiosInstance.get(`/orders/delivery-orders`, {
+          params: { delivery_id },
+        });
+      
+        if (response.data.success === true) {
+          
+          setOrders(response.data.data);
+          // You could add a success toast here if desired
+          // toast.success("Orders fetched successfully");
+        } else {
+ 
+          setError(response.data.message || "Failed to fetch orders");
+          // You could add an error toast here if desired
+          // toast.error(response.data.message);
+        }
+        
+          if (error.response && error.response.data && error.response.data.message) {
+            setError(error.response.data.message);
+            // toast.error(error.response.data.message);
+          } else {
+            setError("Failed to fetch orders. Please try again.");
+            // toast.error("Failed to fetch orders. Please try again.");
+          }
+      } catch (error) {
+        console.error("API Call Failed:", error.response?.data || error.message);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
