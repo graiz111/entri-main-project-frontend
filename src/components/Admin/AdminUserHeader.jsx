@@ -6,10 +6,9 @@ import ThemeToggle from '../../context/ThemeToggle';
 import { axiosInstance } from '../../utils/axios';
 import logo from '../../assets/logo.png'
 
-const AdminUserHeader = ({ isOpen, setIsOpen, profilePic, _id, role, name }) => {
+const AdminUserHeader = ({isMobileMenuOpen, setIsMobileMenuOpen, isOpen, setIsOpen, profilePic, _id, role, name }) => {
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchRef = useRef(null);
   const { theme } = useContext(ThemeContext);
 
@@ -179,36 +178,45 @@ const AdminUserHeader = ({ isOpen, setIsOpen, profilePic, _id, role, name }) => 
 
  
       {isMobileMenuOpen && (
-        <div className={`md:hidden border-t ${
-          theme === 'dark'  
-            ? 'bg-gray-800 border-gray-700'
-            : 'bg-white border-gray-200'
+        <div className={`absolute right-0 mt-2 w-40 rounded-lg shadow-lg border py-1 ml-2 ${
+          theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
         }`}>
-          <div className="px-4 py-2">
-            <div className={`flex items-center rounded-full px-4 py-2 mb-2 ${
-              theme === 'dark'   
-                ? 'bg-gray-700' 
-                : 'bg-gray-100'
+          <NavLink to={"addcoupons"}>
+            <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+              theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
             }`}>
-              <Search className={theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} />
-              <input
-                type="text"
-                placeholder="Search..."
-                className={`ml-2 bg-transparent outline-none text-sm w-full ${
-                  theme === 'dark'   
-                    ? 'placeholder-gray-400 text-gray-200' 
-                    : 'placeholder-gray-500 text-gray-700'
-                }`}
-              />
+              <Users className="h-4 w-4 mr-2" />
+              Add Coupons
             </div>
-            <NavLink to={`/admin/user/${_id}/${role}`}>
-              <div className={`px-4 py-2 text-sm rounded-lg ${
-                theme === 'dark'  
-                  ? 'text-gray-200 hover:bg-gray-700'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}>Dashboard</div>
+          </NavLink>
+          <NavLink to={"editprofile"}>
+            <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+              theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+            }`}>
+              <Users className="h-4 w-4 mr-2" />
+             Edit Profile
+            </div>
+          </NavLink>
+          <NavLink to={`/admin/user/${_id}/${role}`}>
+              <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                theme === 'dark'   
+                  ? 'hover:bg-gray-700 text-gray-200' 
+                  : 'hover:bg-gray-100 text-gray-700'
+              }`}>
+                <Home className="h-4 w-4" />
+                <span>Dashboard</span>
+              </button>
             </NavLink>
-          </div>
+          
+          <button
+            onClick={handleLogout}
+            className={`w-full flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+              theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <LogOut className="h-4 w-4 mr-2"/>
+            Logout
+          </button>
         </div>
       )}
       

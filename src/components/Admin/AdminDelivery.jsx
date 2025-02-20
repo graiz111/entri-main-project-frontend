@@ -20,6 +20,9 @@ const AdminDelivery = () => {
     phone: "",
     role: "delivery",
   });
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     fetchDelivery();

@@ -9,7 +9,7 @@ import{ axiosInstance} from '../../utils/axios';
 
 
 
-const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) => {
+const RestaurantUserHeader = ({ isMobileMenuOpen, setIsMobileMenuOpen,isOpen, setIsOpen,profilePic,_id,role,name }) => {
   (profilePic,_id,role,name,"userheader");
   
  const { theme } = useContext(ThemeContext);
@@ -17,7 +17,7 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+ 
 
   
   
@@ -248,13 +248,30 @@ const RestaurantUserHeader = ({ isOpen, setIsOpen,profilePic,_id,role,name }) =>
                   : 'text-gray-700 hover:bg-gray-100'
               }`}>Home</div>
             </NavLink>
-            <NavLink to="/restaurant/contact-us">
-              <div className={`px-4 py-2 text-sm rounded-lg ${
-                theme === 'dark'  
-                  ? 'text-gray-200 hover:bg-gray-700'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}>Contact</div>
-            </NavLink>
+            <NavLink to={`orders?restaurant_id=${_id}`}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}>Orders</div>
+                      </NavLink>
+                      <NavLink to={`menu`}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}>Items</div>
+                      </NavLink>
+                      <NavLink to={`editprofile`}>
+                        <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                          theme === 'dark'  
+                            ? 'text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}>
+                          EditProfile
+                        </div>
+                      </NavLink>
+          
           </div>
         </div>
       )}

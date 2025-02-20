@@ -102,6 +102,12 @@ const DeliveryHeader = ({ isOpen, setIsOpen }) => {
                       Login
                     </NavLink>
                     <NavLink 
+                      to="/delivery"
+                      className={`block px-4 py-2 text-sm ${theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'} transition duration-150`}
+                    >
+                     Dashboard
+                    </NavLink>
+                    <NavLink 
                       to="/"
                       className={`block px-4 py-2 text-sm ${theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'} transition duration-150`}
                     >

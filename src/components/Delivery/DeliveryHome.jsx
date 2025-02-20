@@ -4,7 +4,7 @@ import { FiArrowRight, FiMapPin, FiClock, FiPhoneCall } from 'react-icons/fi';
 import { BiMoney } from 'react-icons/bi';
 import { MdRestaurant, MdDeliveryDining } from 'react-icons/md';
 import { ThemeContext } from '../../context/ThemeContext';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import deliverypic1 from '../../assets/deliverypic1.jpeg';
 import respic1 from '../../assets/respic1.avif';
 import respic2 from '../../assets/respic2.avif';
@@ -12,6 +12,12 @@ import respic3 from '../../assets/respic3.avif';
 
 const DeliveryHome = () => {
   const { theme } = useContext(ThemeContext);
+  const navigate=useNavigate()
+
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
   
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -22,7 +28,7 @@ const DeliveryHome = () => {
     <div className={`flex-grow ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-slate-50 text-gray-800'} transition-colors duration-300 overflow-auto `}>
       
       {/* Hero Section */}
-      <section className={`${theme === 'dark' ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-purple-600 to-indigo-700'} py-16 relative overflow-hidden`}>
+      <section className={`${theme === 'dark' ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-purple-600 to-indigo-700'} py-10 relative overflow-hidden`}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div 
@@ -33,19 +39,7 @@ const DeliveryHome = () => {
             >
               <h1 className="text-4xl sm:text-5xl font-bold mb-4">Deliver With <span className="text-yellow-300">Foodie Buddie</span></h1>
               <p className="text-xl mb-8 text-gray-100">Flexible hours. Competitive earnings. Join our team of delivery partners today.</p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link to="/delivery/signup?role=delivery">
-                  <button className="px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-900 rounded-full font-medium flex items-center justify-center gap-2 transition-all duration-200 transform hover:scale-105 shadow-lg">
-                    Sign Up Now <FiArrowRight />
-                  </button>
-                </Link>
-                <Link to="/delivery/login?role=delivery">
-                  <button className="px-8 py-3 bg-transparent hover:bg-white/10 border border-white text-white rounded-full font-medium transition-all duration-200">
-                    Already a Partner? Log In
-                  </button>
-                </Link>
-              </div>
+         
             </div>
             
             <div 

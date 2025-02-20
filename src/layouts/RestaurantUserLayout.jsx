@@ -10,10 +10,13 @@ const RestaurantUserLayout = () => {
   const [User, setUser] = useState({})
   const { _id,role } = useParams();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsOpen(false);
+    setIsMobileMenuOpen(false)
   };
+  
 
   
 
@@ -46,7 +49,7 @@ const RestaurantUserLayout = () => {
 
   return (
     <div className="flex flex-col ">
-      <RestaurantUserHeader isOpen={isOpen} setIsOpen={setIsOpen} profilePic={User?.profilePic} _id={User?._id} role={User?.role} name={User?.name}/>
+      <RestaurantUserHeader isOpen={isOpen} setIsOpen={setIsOpen} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} profilePic={User?.profilePic} _id={User?._id} role={User?.role} name={User?.name}/>
       <main className="flex-grow mt-20" onClick={toggleDropdown}>
         <Outlet /> {/* 👈 This renders RestaurantUserHome or other child routes */}
       </main>

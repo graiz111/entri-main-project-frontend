@@ -121,21 +121,9 @@ const DeliveryUserHome = ({ name, userId }) => {
   ];
 
   return (
-    <div className={`flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white' : 'text-gray-800'}`}>
+    <div className={`flex flex-col  ${theme === 'dark' ? 'bg-gray-900 text-white' : 'text-gray-800'}`}>
      
-      <header className={`md:hidden flex items-center justify-between p-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
-        <button onClick={() => setShowSidebar(true)}>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-        <h1 className="text-lg font-bold">Foodie Buddie</h1>
-        <img 
-          src={userData.profilePic} 
-          alt="Profile" 
-          className="w-8 h-8 rounded-full object-cover"
-        />
-      </header>
+ 
 
       <div className="flex-1 container mx-auto relative">
      

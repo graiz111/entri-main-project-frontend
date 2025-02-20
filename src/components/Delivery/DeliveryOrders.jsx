@@ -136,7 +136,7 @@ const DeliveryOrders = () => {
   const completedOrders = orders.filter((order) => order.status === "Delivered");
 
   return (
-    <div className={`p-4 md:p-6 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
+    <div className={` p-4 md:p-6 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
       <h1 className={`text-2xl md:text-3xl font-bold text-center mb-8 ${
         theme === 'dark' ? 'text-white' : 'text-gray-800'
       }`}>

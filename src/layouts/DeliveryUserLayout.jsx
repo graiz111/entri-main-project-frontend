@@ -45,7 +45,7 @@ const DeliveryUserLayout = () => {
   return (
     <div className="flex flex-col ">
       <DeliveryUserHeader isOpen={isOpen} setIsOpen={setIsOpen} profilePic={User?.profilePic} _id={User?._id} role={User?.role} name={User?.name}/>
-      <main className="flex-grow " onClick={toggleDropdown}>
+      <main className="min-h-screen pt-4 flex-grow " onClick={toggleDropdown}>
         <Outlet name={User?.name}/> {/* 👈 This renders RestaurantUserHome or other child routes */}
       </main>
      

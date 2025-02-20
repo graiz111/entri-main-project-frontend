@@ -13,11 +13,27 @@ const SuccessPage = () => {
   const [error, setError] = useState(null);
   const { theme } = useContext(ThemeContext);
 
+
+  useEffect(() => {
+    // Check if the user has already visited this page
+    const hasVisited = sessionStorage.getItem("payment_success_visited");
+
+    if (hasVisited) {
+      // Redirect if they have already visited
+      navigate(`/user/${userId}/user`);
+    } else {
+      // Mark the page as visited
+      sessionStorage.setItem("payment_success_visited", "true");
+      console.log("Payment successful!");
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
      
     }, 1000);
+
 
 
     const countdownTimer = setInterval(() => {
@@ -102,25 +118,13 @@ const SuccessPage = () => {
             <div className="w-full bg-gray-300 h-2 rounded-full overflow-hidden">
               <div 
                 className="bg-purple-600 h-full transition-all duration-1000 ease-linear"
-                style={{ width: `${(countdown / 6) * 100}%` }}
+                style={{ width: `${(countdown / 4) * 100}%` }}
               ></div>
             </div>
           </div>
           
           <div className="flex flex-col space-y-3">
          
-            
-            <button
-              onClick={() => navigate("orders")}
-              className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                theme === 'dark'
-                  ? 'bg-purple-700 hover:bg-purple-600 text-white'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              <FaHistory />
-              <span>View Your Orders</span>
-            </button>
           </div>
         </div>
       </div>

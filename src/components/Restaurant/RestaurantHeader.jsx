@@ -13,12 +13,11 @@ import ThemeToggle from "../../context/ThemeToggle";
 
 
 
-const RestaurantHeader = ({ isOpen, setIsOpen}) => {
+const RestaurantHeader = ({ isOpen, setIsOpen,isMobileMenuOpen, setIsMobileMenuOpen}) => {
 
   const searchRef = useRef(null);
 
   const [showSearch, setShowSearch] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
  
   
   const { theme } = useContext(ThemeContext);
@@ -69,7 +68,7 @@ const RestaurantHeader = ({ isOpen, setIsOpen}) => {
             <img
               src={logo}
               alt="Logo"
-              className="w-10 h-10 object-contain"
+              className="w-10 h-10 object-contain rounded-full"
             />
             <h1 className="text-lg sm:text-2xl md:text-3xl font-bold hidden md:block"
               style={{
@@ -158,33 +157,41 @@ const RestaurantHeader = ({ isOpen, setIsOpen}) => {
 
  
       {isMobileMenuOpen && (
-        <div className={`md:hidden border-t ${
+         <div className={`absolute right-0 mt-2 w-36 rounded-lg shadow-lg border py-1 mr-2 ${
           theme === 'dark'  
             ? 'bg-gray-800 border-gray-700'
-            : 'bg-white border-gray-200'
+            : 'bg-white border-gray-100'
         }`}>
-          <div className="px-4 py-2">
-            <div className={`flex items-center rounded-full px-4 py-2 mb-2 ${
-              theme === 'dark'   
-                ? 'bg-gray-700' 
-                : 'bg-gray-100'
-            }`}>
-            </div>
-            <NavLink to="/">
-              <div className={`px-4 py-2 text-sm rounded-lg ${
+          
+            <NavLink to="/restaurant/login?role=restaurant">  
+              <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                theme === 'dark'  
+                  ? 'text-gray-200 hover:bg-gray-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}>Login</div>
+            </NavLink>
+            <NavLink to="/restaurant/signup?role=restaurant">  
+              <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                theme === 'dark'  
+                  ? 'text-gray-200 hover:bg-gray-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}>Signup</div>
+            </NavLink>
+            <NavLink to="/restaurant">  
+              <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
+                theme === 'dark'  
+                  ? 'text-gray-200 hover:bg-gray-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}>Dashboard</div>
+            </NavLink>
+            <NavLink to="/">  
+              <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
                 theme === 'dark'  
                   ? 'text-gray-200 hover:bg-gray-700'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}>Home</div>
             </NavLink>
-            <NavLink to="/restaurant/contact-us">
-              <div className={`px-4 py-2 text-sm rounded-lg ${
-                theme === 'dark'  
-                  ? 'text-gray-200 hover:bg-gray-700'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}>Contact</div>
-            </NavLink>
-          </div>
+         
         </div>
       )}
      

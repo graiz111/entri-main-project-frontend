@@ -120,7 +120,7 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Cart Icon */}
+    
             <div className="relative cursor-pointer" onClick={openCart}>
               <IoCart className={`h-6 w-6 ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
@@ -144,7 +144,7 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
                 onClick={toggleDropdown}
               />
 
-                {isOpen && (
+                {/* {isOpen && (
                         <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
                           theme === 'dark'  
                             ? 'bg-gray-800 border-gray-700'
@@ -192,6 +192,171 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
                                 : 'text-gray-700 hover:bg-gray-100'
                             }`} onClick={()=>Logout()} >Logout</div>
                           </NavLink>
+                        </div>
+                      )} */}
+                      {isOpen && (
+                        <div
+                          className={`absolute right-0  w-40 rounded-lg shadow-lg border transition-all duration-300 transform origin-top ${
+                            theme === 'dark'
+                              ? 'bg-gray-800 border-gray-700'
+                              : 'bg-white border-gray-100'
+                          } ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                        >
+                          {/* Profile */}
+                          <NavLink to="editprofile">
+                            <div
+                              className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 ${
+                                theme === 'dark'
+                                  ? 'text-gray-200 hover:bg-gray-700'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-3"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              Profile
+                            </div>
+                          </NavLink>
+
+                          {/* Orders */}
+                          <NavLink to={`orders?user_id=${_id}`}>
+                            <div
+                              className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 ${
+                                theme === 'dark'
+                                  ? 'text-gray-200 hover:bg-gray-700'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-3"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                              </svg>
+                              Orders
+                            </div>
+                          </NavLink>
+
+                          {/* Add Address */}
+                          <NavLink to={`addaddress?user_id=${_id}`}>
+                            <div
+                              className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 ${
+                                theme === 'dark'
+                                  ? 'text-gray-200 hover:bg-gray-700'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-3"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                              </svg>
+                              Add Address
+                            </div>
+                          </NavLink>
+                          <NavLink to={`/user/${_id}/${role}`}>
+                            <div
+                              className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 ${
+                                theme === 'dark'
+                                  ? 'text-gray-200 hover:bg-gray-700'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-3"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                              </svg>
+                              Home
+                            </div>
+                          </NavLink>
+
+                          {/* Contact Us */}
+                          <NavLink to="contact-us">
+                            <div
+                              className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 ${
+                                theme === 'dark'
+                                  ? 'text-gray-200 hover:bg-gray-700'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-3"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                              </svg>
+                              Contact Us
+                            </div>
+                          </NavLink>
+
+                          {/* About Us */}
+                          <NavLink to="about-us">
+                            <div
+                              className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 ${
+                                theme === 'dark'
+                                  ? 'text-gray-200 hover:bg-gray-700'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-3"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              About Us
+                            </div>
+                          </NavLink>
+
+                          {/* Logout */}
+                          <div
+                            className={`px-4 py-3 text-sm flex items-center hover:bg-opacity-20 transition-colors duration-200 cursor-pointer ${
+                              theme === 'dark'
+                                ? 'text-gray-200 hover:bg-gray-700'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                            onClick={() => Logout()}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 mr-3"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            Logout
+                          </div>
                         </div>
                       )}
             </div>

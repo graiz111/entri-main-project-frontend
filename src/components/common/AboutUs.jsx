@@ -64,14 +64,7 @@ const AboutUs = () => {
         <p className="mt-2 text-sm sm:text-base">
           Become a part of our growing <span className="font-semibold">Foodie Buddie</span> community. Whether you're a customer, restaurant, or delivery partner, we welcome you to join us in our journey of making food ordering more convenient and enjoyable.
         </p>
-        <div className="text-center mt-6">
-          <NavLink
-            to="/contact-us"
-            className="bg-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 transition"
-          >
-            Contact Us
-          </NavLink>
-        </div>
+       
       </div>
     </div>
   );

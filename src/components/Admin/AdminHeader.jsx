@@ -14,10 +14,9 @@ import { ThemeContext } from '../../context/ThemeContext';
 import ThemeToggle from '../../context/ThemeToggle';
 import logo from '../../assets/logo.png';
 
-const AdminHeader = ({ isOpen,setIsOpen}) => {
+const AdminHeader = ({ isOpen,setIsOpen,isMobileMenuOpen, setIsMobileMenuOpen}) => {
   
   const [showSearch, setShowSearch] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchRef = useRef(null);
   const { theme } = useContext(ThemeContext);
 
@@ -167,22 +166,45 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className={`md:hidden border-t ${
-          theme === 'dark'  
-            ? 'bg-gray-800 border-gray-700'
-            : 'bg-white border-gray-200'
-        }`}>
-          <div className="px-4 py-2">
-            <div className={`flex items-center rounded-full px-4 py-2 mb-2 ${
-              theme === 'dark'   
-                ? 'bg-gray-700' 
-                : 'bg-gray-100'
+            <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
+              theme === 'dark'  
+                ? 'bg-gray-800 border-gray-700'
+                : 'bg-white border-gray-100'
             }`}>
-             
+              <NavLink to="/admin/signup?role=admin">
+                <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 ${
+                  theme === 'dark'  
+                    ? 'text-gray-200 hover:bg-gray-700'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}>
+                  <Users className="h-4 w-4 mr-2" />
+                  signUp
+                </div>
+              </NavLink>
+            
+            <NavLink  to="/admin/login?role=admin">
+            <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 cursor-pointer ${
+                theme === 'dark'  
+                  ? 'text-gray-200 hover:bg-gray-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}>
+                <Users className="h-4 w-4 mr-2" />
+                Login
+               
+              </div>
+            </NavLink>
+            <NavLink  to="/">
+            <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 cursor-pointer ${
+                theme === 'dark'  
+                  ? 'text-gray-200 hover:bg-gray-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Home
+               
+              </div>
+            </NavLink>
             </div>
-        
-          </div>
-        </div>
       )}
     </div>
   );

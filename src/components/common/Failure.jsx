@@ -7,8 +7,25 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Failure = () => {
   const navigate = useNavigate();
+    const { userId } = useParams();
   const [countdown, setCountdown] = useState(6); 
   const { theme } = useContext(ThemeContext);
+
+
+  useEffect(() => {
+  
+    const hasVisited = sessionStorage.getItem("payment_success_visited");
+
+    if (hasVisited) {
+    
+      navigate(`/user/${userId}/user`);
+    } else {
+
+      sessionStorage.setItem("payment_success_visited", "true");
+      console.log("Payment successful!");
+    }
+  }, [navigate]);
+
 
   useEffect(() => {
   
@@ -18,7 +35,7 @@ const Failure = () => {
       setCountdown((prevCountdown) => {
         if (prevCountdown <= 1) {
           clearInterval(timer);
-          navigate("/cart");
+          navigate(`/user/${userId}/user/usercart/${userId}`);
           return 0;
         }
         return prevCountdown - 1;
@@ -57,36 +74,11 @@ const Failure = () => {
             <div className="w-full bg-gray-300 h-2 rounded-full overflow-hidden">
               <div 
                 className="bg-purple-600 h-full transition-all duration-1000 ease-linear"
-                style={{ width: `${(countdown / 6) * 100}%` }}
+                style={{ width: `${(countdown / 3) * 100}%` }}
               ></div>
             </div>
           </div>
-          
-          <div className="flex flex-col space-y-3">
-            <button
-              onClick={() => navigate("/cart")}
-              className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                  : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-              }`}
-            >
-              <FaShoppingCart />
-              <span>Return to Cart</span>
-            </button>
-            
-            <button
-              onClick={() => navigate("/support")}
-              className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                theme === 'dark'
-                  ? 'bg-purple-700 hover:bg-purple-600 text-white'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              <FaQuestionCircle />
-              <span>Contact Support</span>
-            </button>
-          </div>
+    
         </div>
       </div>
       

@@ -21,6 +21,9 @@ const AdminUsers = () => {
     role: '',
     isActive: true,
   });
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     fetchUsers();

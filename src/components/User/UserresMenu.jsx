@@ -8,7 +8,7 @@ import { ToastContainer,toast } from 'react-toastify';
 
 const UseresMenu = () => {
   const{restaurant_id,_id}=useParams()
-        (restaurant_id,"resinmenu");
+  
         
    
     const navigate = useNavigate();
@@ -55,7 +55,7 @@ const UseresMenu = () => {
         try {
             
             const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { itemId: item_id });
-            ("Fetched Restaurant ID Response:", resResponse.data);
+      
     
             if (resResponse.data.success === true) {
                 const postData = {
@@ -64,16 +64,28 @@ const UseresMenu = () => {
                     item_id: item_id
                 };
     
-                ("Post Data for Cart:", postData);
-    
-                const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
-    
-                if (cartResponse.data.success === true) {
-                    toast.success("Item added to cart!");
-                    ("Cart Response:", cartResponse.data);
-                } else {
-                    toast.error("Failed to add item to cart!");
-                }
+               
+     try {
+                    const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
+            
+                  
+                    if (cartResponse.data.success === true) {
+                      toast.success("Item added to cart!");
+                      ("Cart Response:", cartResponse.data);
+                    } else {
+                      ("Error Condition Met");
+                      ("Error Message:", cartResponse.data.message);
+                      toast.error(cartResponse.data.message); // This should now work
+                    }
+                  } catch (error) {
+                    console.error("API Call Failed:", error.response?.data || error.message);
+                  
+                    if (error.response && error.response.data && error.response.data.message) {
+                      toast.error(error.response.data.message); // Show specific API error message
+                    } else {
+                      toast.error("Failed to add item to cart. Please try again.");
+                    }
+                  }
             } else {
                 toast.error("Failed to fetch restaurant ID!");
             }

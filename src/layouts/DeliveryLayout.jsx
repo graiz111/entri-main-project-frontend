@@ -12,7 +12,7 @@ const DeliveryLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <DeliveryHeader isOpen={isOpen} setIsOpen={setIsOpen}  />
-      <main className="flex-grow mt-20" onClick={toggleDropdown}>
+      <main className="flex-grow mt-16" onClick={toggleDropdown}>
         <Outlet />
       </main>
       <Footer />

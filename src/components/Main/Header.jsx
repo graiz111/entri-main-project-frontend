@@ -81,8 +81,8 @@ const Header = ({ isOpen, setIsOpen }) => {
               </div>
             </div>
             {isOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-                <ul className="py-2">
+              <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
+                <ul className="py-1">
                   {[{ to: "/signup?role=user", label: "Sign Up", color: "text-yellow-600" },
                     { to: "/login?role=user", label: "Login", color: "text-green-600" },
                     { to: "/restaurant", label: "Restaurant", color: "text-orange-600" },

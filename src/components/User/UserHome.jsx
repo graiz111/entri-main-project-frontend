@@ -25,7 +25,7 @@ const UserHome = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, []);
+      }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,7 +46,7 @@ const UserHome = () => {
         const fetchCoupons = async () => {
             try {
                 const couponsResponse = await axiosInstance.get('/user/couponsfetch');
-                ("couponresponse",couponsResponse);
+    
                 
                 setCoupons(couponsResponse.data|| []);
             } catch (error) {
@@ -75,7 +75,7 @@ const UserHome = () => {
         try {
             // Fetch restaurant ID using item ID
             const resResponse = await axiosInstance.post("restaurantadd/fetchresid", { itemId: item_id });
-            ("Fetched Restaurant ID Response:", resResponse.data);
+        
     
             if (resResponse.data.success === true) {
                 const postData = {
@@ -84,23 +84,13 @@ const UserHome = () => {
                     item_id: item_id
                 };
     
-                ("Post Data for Cart:", postData);
+         
     
               
-            //     const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
-            //     (cartResponse.data,"datacartres");
-                
-              
-    
-            //     if (cartResponse.data.success === true) {
-            //         toast.success("Item added to cart!");
-            //         ("Cart Response:", cartResponse.data);
-            //     } else {
-            //         toast.error(cartResponse.data.message);
-            //     }
+         
             try {
                 const cartResponse = await axiosInstance.post("cart/additemtocart", postData);
-                (cartResponse.data, "datacartres");
+        
               
                 if (cartResponse.data.success === true) {
                   toast.success("Item added to cart!");

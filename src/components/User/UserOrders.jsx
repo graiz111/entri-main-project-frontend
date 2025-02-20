@@ -81,7 +81,11 @@ const UserOrders = () => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      await axiosInstance.post(`/orders/${orderId}/cancel`);
+      const response = await axiosInstance.put(`/orders/cancel`, {
+        order_id: orderId, 
+      });
+      
+      if(response.data.success){
 
       setOrders(
         orders.map(order => 
@@ -90,6 +94,10 @@ const UserOrders = () => {
       );
 
       alert('Order cancelled successfully');
+      window.location.reload();
+ 
+      }
+
     } catch (error) {
       console.error('Error canceling order:', error);
       alert('Failed to cancel order. Please try again.');

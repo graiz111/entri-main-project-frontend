@@ -14,6 +14,21 @@ const Success = () => {
   const [countdown, setCountdown] = useState(6); 
   const [status, setStatus] = useState('processing');
   const { theme } = useContext(ThemeContext);
+
+
+  useEffect(() => {
+    // Check if the user has already visited this page
+    const hasVisited = sessionStorage.getItem("payment_success_visited");
+
+    if (hasVisited) {
+      // Redirect if they have already visited
+      navigate(`/user/${userId}/user`);
+    } else {
+      // Mark the page as visited
+      sessionStorage.setItem("payment_success_visited", "true");
+      console.log("Payment successful!");
+    }
+  }, [navigate]);
   
   useEffect(() => {
     const handleSuccess = async () => {
@@ -114,36 +129,11 @@ const Success = () => {
             <div className="w-full bg-gray-300 h-2 rounded-full overflow-hidden">
               <div 
                 className="bg-purple-600 h-full transition-all duration-1000 ease-linear"
-                style={{ width: `${(countdown / 6) * 100}%` }}
+                style={{ width: `${(countdown / 4) * 100}%` }}
               ></div>
             </div>
           </div>
-          
-          <div className="flex flex-col space-y-3">
-            <button
-              onClick={() => navigate(`/user/${userId}/user`)}
-              className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                  : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-              }`}
-            >
-              <FaHome />
-              <span>Go to Dashboard</span>
-            </button>
-            
-            <button
-              onClick={() => navigate(`/user/${userId}/orders`)}
-              className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                theme === 'dark'
-                  ? 'bg-purple-700 hover:bg-purple-600 text-white'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              <FaHistory />
-              <span>View Your Orders</span>
-            </button>
-          </div>
+         
         </div>
       </div>
       

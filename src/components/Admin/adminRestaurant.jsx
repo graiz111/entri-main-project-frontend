@@ -20,6 +20,9 @@ const AdminRestaurant = () => {
     phone: '',
     password: '', 
   });
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     fetchRestaurants();

@@ -158,7 +158,7 @@ const Cart = () => {
         theme === 'dark' ? 'bg-gray-800' : 'bg-white'
       } p-4 rounded-xl shadow-md relative`}>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(`/user/${userId}/user`)}
           className={`absolute top-4 right-4 ${
             theme === 'dark' ? 'text-gray-400 hover:text-red-400' : 'text-gray-600 hover:text-red-500'
           }`}
