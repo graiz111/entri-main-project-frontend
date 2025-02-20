@@ -66,8 +66,8 @@ const ListDisplay = ({ title, data, theme, onClose }) => {
           <div key={index} className={`p-4 rounded-lg ${
             theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
           }`}>
-            <p className="font-medium">{item.name}</p>
-            <p className="text-sm text-gray-500">{item.email}</p>
+            <p className="font-medium">{item?.name}</p>
+            <p className="text-sm text-gray-500">{item?.email}</p>
           </div>
         ))}
       </div>
@@ -144,12 +144,12 @@ const OrdersDisplay = ({ orders, theme, onClose }) => {
               <MapPin className="h-4 w-4 mr-2 text-gray-500 mt-1" />
               <div>
                 <p className="text-xs text-gray-500">Delivery Address</p>
-                <p className="text-sm">{order?.user_addresses?.[0].address_line_1|| '123 Main St, City'}</p>
-                <p className="text-sm">{order?.user_addresses?.[0].address_line_2|| '123 Main St, City'}</p>
-                <p className="text-sm">{order?.user_addresses?.[0].city|| '123 Main St, City'}</p>
+                <p className="text-sm">{order?.user_addresses?.[0]?.address_line_1|| '123 Main St, City'}</p>
+                <p className="text-sm">{order?.user_addresses?.[0]?.address_line_2|| '123 Main St, City'}</p>
+                <p className="text-sm">{order?.user_addresses?.[0]?.city|| '123 Main St, City'}</p>
               </div>
             </div>
-            <div className="flex items-start mt-3">
+            <div className="flex items-start mt-3">?
               <MapPin className="h-4 w-4 mr-2 text-gray-500 mt-1" />
               <div>
                 <p className="text-xs text-gray-500">Delivery Address</p>
@@ -183,10 +183,10 @@ const AdminUserHome = () => {
         const deliveryPartnersResponse = await axiosInstance.get('/admin/deliveryfetch');
         const ordersResponse = await axiosInstance.get('/admin/ordersfetch');
 
-        setUsers(usersResponse.data.data);
-        setRestaurants(restaurantsResponse.data.data);
-        setDeliveryPartners(deliveryPartnersResponse.data.data);
-        setOrders(ordersResponse.data.data);
+        setUsers(usersResponse?.data.data);
+        setRestaurants(restaurantsResponse?.data.data);
+        setDeliveryPartners(deliveryPartnersResponse?.data.data);
+        setOrders(ordersResponse?.data.data);
      
         
 
@@ -194,7 +194,7 @@ const AdminUserHome = () => {
           {
             icon: Users,
             title: 'Total Users',
-            value: usersResponse.data.data.length,
+            value: usersResponse?.data.data.length,
             change: 12.5,
             timeframe: 'Last 30 days',
             color: 'bg-blue-500',
@@ -203,7 +203,7 @@ const AdminUserHome = () => {
           {
             icon: ShoppingBag,
             title: 'Active Restaurants',
-            value: restaurantsResponse.data.data.length,
+            value: restaurantsResponse?.data.data.length,
             change: 8.2,
             timeframe: 'Last 30 days',
             color: 'bg-green-500',
@@ -212,7 +212,7 @@ const AdminUserHome = () => {
           {
             icon: Truck,
             title: 'Delivery Partners',
-            value: deliveryPartnersResponse.data.data.length,
+            value: deliveryPartnersResponse?.data.data.length,
             change: -2.4,
             timeframe: 'Last 30 days',
             color: 'bg-purple-500',
@@ -221,7 +221,7 @@ const AdminUserHome = () => {
           {
             icon: BarChart,
             title: 'Total Orders',
-            value: ordersResponse.data.data.length,
+            value: ordersResponse?.data?.data?.length,
             change: 15.6,
             timeframe: 'Last 30 days',
             color: 'bg-yellow-500',

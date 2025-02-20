@@ -53,15 +53,29 @@ const DeliveryOrders = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.get(`/orders/delivery-orders`, {
-        params: { delivery_id }, 
-      });
-
-      if (response.data.success) {
-        ("Orders fetched successfully:", response.data.data);
-        setOrders(response.data.data);
-      } else {
-        setError("Failed to fetch orders. Please try again.");
+ 
+      try {
+        const response = await axiosInstance.get(`/orders/delivery-orders`, {
+          params: { delivery_id },
+        });
+      
+        if (response.data.success === true) {
+          console.log("Orders fetched successfully:", response.data.data);
+          setOrders(response.data.data);
+       
+        } else {
+          setError(response.data.message || "Failed to fetch orders");
+        
+        }
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+          setError(error.response.data.message);
+          
+        } else {
+          setError("Failed to fetch orders. Please try again.");
+          
+        }
+        console.error("API Call Failed:", error.response?.data || error.message);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -109,14 +123,9 @@ const DeliveryOrders = () => {
 
   if (error) {
     return (
-      <div className={`text-center text-red-500 py-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+      <div className={`text-center text-black py-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
         {error}
-        <button
-          onClick={fetchOrders}
-          className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-        >
-          Retry
-        </button>
+      
       </div>
     );
   }

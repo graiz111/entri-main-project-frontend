@@ -137,6 +137,17 @@ const AdminHeader = ({ isOpen,setIsOpen}) => {
                    
                   </div>
                 </NavLink>
+                <NavLink  to="/">
+                <div className={`flex items-center px-4 py-2 text-sm hover:bg-opacity-20 cursor-pointer ${
+                    theme === 'dark'  
+                      ? 'text-gray-200 hover:bg-gray-700'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Home
+                   
+                  </div>
+                </NavLink>
                 </div>
               )}
             </div>
