@@ -21,16 +21,16 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { name: "Home", to: "/" },
-    { name: "Menu", to: "/menu" },
-    { name: "About Us", to: "/about-us" },
-    { name: "Contact", to: "/contact-us" }
+    { name: "Home"},
+    { name: "Menu"},
+    { name: "About Us"},
+    { name: "Contact"}
   ];
 
   const legalLinks = [
-    { name: "Privacy Policy", to: "/privacy" },
-    { name: "Terms of Service", to: "/terms" },
-    { name: "Refund Policy", to: "/refund" }
+    { name: "Privacy Policy"},
+    { name: "Terms of Service"},
+    { name: "Refund Policy"}
   ];
 
   return (
@@ -73,18 +73,17 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
           <ul className="space-y-2">
             {quickLinks.map((link, index) => (
-              <li key={index}>
-                <NavLink 
-                  to={link.to} 
+              <li key={index}
                   className={`
                     transition-colors duration-300
                     ${theme === 'dark' 
                       ? 'text-gray-400 hover:text-green-400' 
                       : 'text-gray-600 hover:text-green-600'}
                   `}
-                >
-                  {link.name}
-                </NavLink>
+              
+              >
+                {link.name}
+               
               </li>
             ))}
           </ul>
@@ -95,18 +94,17 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Legal</h3>
           <ul className="space-y-2">
             {legalLinks.map((link, index) => (
-              <li key={index}>
-                <NavLink 
-                  to={link.to} 
+              <li key={index}
                   className={`
                     transition-colors duration-300
                     ${theme === 'dark' 
                       ? 'text-gray-400 hover:text-green-400' 
                       : 'text-gray-600 hover:text-green-600'}
                   `}
-                >
-                  {link.name}
-                </NavLink>
+               
+              >
+               
+                {link.name}
               </li>
             ))}
           </ul>
