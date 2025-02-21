@@ -91,18 +91,25 @@ const AdminUsers = () => {
 
   const addUser = async () => {
     try {
-      await axiosInstance.post(
-        '/admin/add-user',
-        { ...newUser, role:'user', },
+      const response = await axiosInstance.post(
+        "/admin/add-user",
+        { ...newUser, role: "user" },
         { withCredentials: true }
       );
-      setShowAddUserModal(false);
-      fetchUsers();
+  
+      if (response.data.success) {
+        setShowAddUserModal(false);
+        fetchUsers();
+        toast.success(response.data.message || "User added successfully");
+      } else {
+        toast.error(response.data.message || "Something went wrong");
+      }
     } catch (err) {
-      ('Error adding user:', err);
+      toast.error(err.response?.data?.message || "Failed to add user");
+      console.error("Error adding user:", err);
     }
   };
-
+  
   const toggleActiveStatus = async (id, isActive) => {
     try {
       await axiosInstance.put(
