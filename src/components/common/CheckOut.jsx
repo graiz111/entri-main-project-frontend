@@ -19,7 +19,7 @@ const CheckOut = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    ("entered checkout", userId);
+   
     
     const fetchData = async () => {
       try {
@@ -27,7 +27,7 @@ const CheckOut = () => {
         // Fetch cart
         const cartResponse = await axiosInstance.get(`/cart/cart/${userId}`);
         setCart(cartResponse.data.data);
-        ("caetrescheckout cart",cartResponse.data.data);
+   
         
         
         // Fetch addresses
@@ -85,12 +85,11 @@ const CheckOut = () => {
         try {
        
         
-          (cart.items, "items");
-          ("address id check in checkout",selectedAddress);
+          
           
           const stripe = await loadStripe(import.meta.env.VITE_PUBLISHABLE_KEY);
           
-          ("cart total in fun4",cart.totalPrice);
+          
           
           const response = await axiosInstance.post("/payment/create-checkout-session", {
             userId: userId,
@@ -112,7 +111,9 @@ const CheckOut = () => {
           console.error("Error creating checkout session:", error);
           toast.error("Payment failed. Please try again.");
         }
-      } else {
+      }
+ 
+       else {
         
         const response = await axiosInstance.post("/user/order/place", {
           userId: userId,

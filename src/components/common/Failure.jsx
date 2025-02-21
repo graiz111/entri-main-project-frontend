@@ -12,20 +12,6 @@ const Failure = () => {
   const { theme } = useContext(ThemeContext);
 
 
-  useEffect(() => {
-  
-    const hasVisited = sessionStorage.getItem("payment_success_visited");
-
-    if (hasVisited) {
-    
-      navigate(`/user/${userId}/user`);
-    } else {
-
-      sessionStorage.setItem("payment_success_visited", "true");
-      console.log("Payment successful!");
-    }
-  }, [navigate]);
-
 
   useEffect(() => {
   

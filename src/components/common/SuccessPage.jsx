@@ -13,21 +13,6 @@ const SuccessPage = () => {
   const [error, setError] = useState(null);
   const { theme } = useContext(ThemeContext);
 
-
-  useEffect(() => {
-    // Check if the user has already visited this page
-    const hasVisited = sessionStorage.getItem("payment_success_visited");
-
-    if (hasVisited) {
-      // Redirect if they have already visited
-      navigate(`/user/${userId}/user`);
-    } else {
-      // Mark the page as visited
-      sessionStorage.setItem("payment_success_visited", "true");
-      console.log("Payment successful!");
-    }
-  }, [navigate]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);

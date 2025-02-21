@@ -1,11 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { axiosInstance } from '../../utils/axios';
 import io from 'socket.io-client';
-import { ToastContainer,toast } from "react-toastify";
-
-
+import { ToastContainer, toast } from "react-toastify";
 
 const socket = io(import.meta.env.VITE_BASE_URL, {
   reconnection: true,
@@ -26,23 +23,13 @@ const RestaurantOrders = () => {
     fetchOrders();
 
     socket.on('orderStatusUpdated', (updatedOrder) => {
-      ("Received updated order via socket:", updatedOrder);
+      console.log("Received updated order via socket:", updatedOrder);
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === updatedOrder._id ? updatedOrder : order
         )
       );
     });
-    // socket.on('orderStatusUpdated', (updatedOrder) => {
-    //   ("Received updated order via socket:", updatedOrder);
-    //   ("Updated Order ID:", updatedOrder._id);
-    //   setOrders((prevOrders) => {
-    //     ("Previous Orders:", prevOrders);
-    //     return prevOrders.map((order) =>
-    //       order._id === updatedOrder._id ? updatedOrder : order
-    //     );
-    //   });
-    // });
 
     return () => {
       socket.off('orderStatusUpdated');
@@ -53,87 +40,43 @@ const RestaurantOrders = () => {
     try {
       setLoading(true);
       setError(null);
-
-      try {
-        const response = await axiosInstance.get(`/orders/delivery-orders`, {
-          params: { delivery_id },
-        });
       
-        if (response.data.success === true) {
-          
-          setOrders(response.data.data);
-          // You could add a success toast here if desired
-          // toast.success("Orders fetched successfully");
-        } else {
- 
-          setError(response.data.message || "Failed to fetch orders");
-          // You could add an error toast here if desired
-          // toast.error(response.data.message);
-        }
-        
-          if (error.response && error.response.data && error.response.data.message) {
-            setError(error.response.data.message);
-            // toast.error(error.response.data.message);
-          } else {
-            setError("Failed to fetch orders. Please try again.");
-            // toast.error("Failed to fetch orders. Please try again.");
-          }
-      } catch (error) {
-        console.error("API Call Failed:", error.response?.data || error.message);
+      const response = await axiosInstance.get('/orders/restaurant-orders');
+      
+      if (response.data.success) {
+        console.log("Orders data:", response.data.data);
+        setOrders(response.data.data);
+      } else {
+        setError(response.data.message || "Failed to fetch orders");
+        toast.error(response.data.message || "Failed to fetch orders");
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
-      setError("An error occurred while fetching orders. Please try again.");
+      const errorMessage = error.response?.data?.message || "Failed to fetch orders. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  // const assignDeliveryPerson = async (orderId) => {
-  //   try {
-  //     const response = await axiosInstance.put('/orders/assign-delivery', { orderId });
-
-  //     if (response.data.success) {
-  //       ("Delivery person assigned successfully:", response.data.data);
-  //       return response.data; 
-  //     } else {
-  //       console.error("Failed to assign delivery person:", response.data.message);
-  //       return null; 
-  //     }
-  //   } catch (error) {
-  //     console.error("Error assigning delivery person:", error);
-  //     return null; 
-  //   }
-  // };
   const assignDeliveryPerson = async (orderId) => {
     try {
       const response = await axiosInstance.put('/orders/assign-delivery', { orderId });
-  
-      (response.data, "assignDeliveryResponse");
-  
-      if (response.data.success === true) {
+      
+      if (response.data.success) {
         toast.success("Delivery person assigned successfully!");
-        ("Delivery Person Assigned:", response.data.data);
         return response.data;
       } else {
-        ("Error Condition Met");
-        ("Error Message:", response.data.message);
-        toast.error(response.data.message);
+        toast.error(response.data.message || "Failed to assign delivery person");
         return null;
       }
     } catch (error) {
-      console.error("API Call Failed:", error.response?.data || error.message);
-  
-      if (error.response && error.response.data && error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Failed to assign delivery person. Please try again.");
-      }
-  
+      const errorMessage = error.response?.data?.message || "Failed to assign delivery person. Please try again.";
+      toast.error(errorMessage);
       return null;
     }
   };
-  
 
   const updateStatus = async (id, currentStatus) => {
     let newStatus = "";
@@ -143,24 +86,21 @@ const RestaurantOrders = () => {
     if (!newStatus) return;
 
     try {
-
       if (newStatus === "Out for Delivery") {
         const assignResponse = await assignDeliveryPerson(id);
-
-       
-        if (assignResponse && assignResponse.success) {
         
-          socket.emit('updateOrderStatus', { orderId: id, newStatus });
-        } else {
-          console.error("Failed to assign delivery person. Status not updated.");
+        if (!assignResponse || !assignResponse.success) {
+          toast.error("Failed to assign delivery person. Order status not updated.");
           return;
         }
-      } else {
-        
-        socket.emit('updateOrderStatus', { orderId: id, newStatus });
       }
+      
+      socket.emit('updateOrderStatus', { orderId: id, newStatus });
+      toast.success(`Order status updated to ${newStatus}`);
+      
     } catch (error) {
       console.error("Error updating order status:", error);
+      toast.error("Failed to update order status");
     }
   };
 
@@ -173,7 +113,7 @@ const RestaurantOrders = () => {
     if (filteredOrders.length === 0) return null;
 
     return (
-      <div className="mb-8">
+      <div key={`section-${statusTitle}`} className="mb-8">
         <h2 className={`text-2xl font-bold mb-4 ${
           statusTitle === "Placed" ? "text-yellow-500" :
           statusTitle === "Preparing" ? "text-blue-500" :
@@ -193,7 +133,6 @@ const RestaurantOrders = () => {
                 <th className="py-3 px-4 text-left">Items</th>
                 <th className="py-3 px-4 text-left">Total</th>
                 <th className="py-3 px-4 text-left">Payment</th>
-     
                 {(statusTitle === "Placed" || statusTitle === "Preparing") && (
                   <th className="py-3 px-4 text-left">Actions</th>
                 )}
@@ -209,14 +148,14 @@ const RestaurantOrders = () => {
                   </td>
                   <td className="py-3 px-4">{order.user_id?.name || "N/A"}</td>
                   <td className="py-3 px-4">{formatDate(order.createdAt)}</td>
-                  <td className="py-3 px-4 max-w-xs truncate" title={order.address}>
+                  <td className="py-3 px-4 max-w-xs truncate" >
                     {order.address || "N/A"}
                   </td>
                   <td className="py-3 px-4 max-w-xs">
                     <div className="max-h-20 overflow-y-auto">
                       {order.items && order.items.length > 0 ? (
                         order.items.map((item, index) => (
-                          <div key={index} className="mb-1">
+                          <div key={`${order._id}-item-${index}`} className="mb-1">
                             {item?.item_id?.name || "Unknown Item"} x{item?.quantity || 1}
                           </div>
                         ))
@@ -231,7 +170,6 @@ const RestaurantOrders = () => {
                   <td className="py-3 px-4">
                     {order.paymentMethod || "N/A"}
                   </td>
-
                   {(order.status === "Placed" || order.status === "Preparing") && (
                     <td className="py-3 px-4">
                       <button
@@ -264,7 +202,6 @@ const RestaurantOrders = () => {
     return <div className="text-center text-red-500 py-4">{error}</div>;
   }
 
-
   const getOrdersByStatus = (status) => {
     return orders.filter(order => order.status === status);
   };
@@ -281,7 +218,7 @@ const RestaurantOrders = () => {
       
       {orders.length === 0 && (
         <div className="text-center text-gray-500 py-8">
-          No orders found for this restaurant
+          No orders found for this restaurant now
         </div>
       )}
       <ToastContainer/>
@@ -290,3 +227,5 @@ const RestaurantOrders = () => {
 };
 
 export default RestaurantOrders;
+
+
