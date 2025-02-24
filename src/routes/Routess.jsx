@@ -57,43 +57,6 @@ import CouponManagement from '../components/Admin/AdminCoupon';
 
 
 
-// const ProtectedRoute = ({ children, allowedRoles }) => {
-//   const [auth, setAuth] = useState(null);
-//   const navigate = useNavigate(); // Assuming you're using react-router
-
-//   useEffect(() => {
-//     const verifyToken = async () => {
-//       try {
-//         const response = await axiosInstance.get("/auth/verify-token");
-        
-//         if (response.data.success) {
-//           const userRole = response.data.role;
-          
-//           if (allowedRoles.includes(userRole)) {
-//             setAuth(true);
-//           } else {
-//             setAuth(false);
-//             navigate('/unauthorized'); // Redirect to unauthorized page
-//           }
-//         } else {
-//           setAuth(false);
-//           navigate('/'); // Redirect to login
-//         }
-//       } catch (error) {
-//         setAuth(false);
-//         navigate('/'); // Redirect to login on error
-//       }
-//     };
-    
-//     verifyToken();
-//   }, [allowedRoles, navigate]);
-
-//   if (auth === null) {
-//     return <div>Loading...</div>; // Or a nicer loading component
-//   }
-
-//   return auth ? children : null;
-// };
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const [auth, setAuth] = useState(null);

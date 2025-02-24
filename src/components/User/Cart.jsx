@@ -88,10 +88,11 @@ const Cart = () => {
      
       const couponResponse = await axiosInstance.post("/admin/couponsvalidate", {
         code: couponCode,
+        userId,
         cartTotal: cart.totalPrice,
       });
   
-      ("Coupon Validation Response:", couponResponse.data);
+
   
       if (couponResponse.data.success) {
         const discount = couponResponse.data.discountPercentage;
@@ -104,7 +105,7 @@ const Cart = () => {
           amount: newTotal,
         });
   
-        ("Cart Update Response:", updateResponse.data);
+      
   
         if (updateResponse.data.success) {
           setDiscountedTotal(newTotal);
