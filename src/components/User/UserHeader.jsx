@@ -121,12 +121,12 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
 
           <div className="flex items-center space-x-4">
     
-            <div className="relative cursor-pointer" onClick={openCart}>
-              <IoCart className={`h-6 w-6 ${
+            <div className="relative cursor-pointer p-1" onClick={openCart}>
+              <IoCart className={`h-7 w-7 ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
               }`} />
-              <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                0
+              <div className="absolute -top-0 -right-2 bg-green-500 text-white rounded-full w-6 h-4 flex items-center justify-center text-xs">
+                cart 
               </div>
             </div>
 
@@ -144,56 +144,6 @@ const UserHeader = ({ isOpen, setIsOpen, profilepic,_id,role }) => {
                 onClick={toggleDropdown}
               />
 
-                {/* {isOpen && (
-                        <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 ${
-                          theme === 'dark'  
-                            ? 'bg-gray-800 border-gray-700'
-                            : 'bg-white border-gray-100'
-                        }`}>
-                          <NavLink to={`editprofile`}>
-                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                              theme === 'dark'  
-                                ? 'text-gray-200 hover:bg-gray-700'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}>Profile</div>
-                          </NavLink>
-                          <NavLink to={`orders?user_id=${_id}`}>
-                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                              theme === 'dark'  
-                                ? 'text-gray-200 hover:bg-gray-700'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}>Orders</div>
-                          </NavLink>
-                          <NavLink to={`addaddress?user_id=${_id}`}>
-                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                              theme === 'dark'  
-                                ? 'text-gray-200 hover:bg-gray-700'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}>Add Address</div>
-                          </NavLink>
-                          <NavLink to="contact-us">
-                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                              theme === 'dark'  
-                                ? 'text-gray-200 hover:bg-gray-700'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}>Contact Us</div>
-                          </NavLink>
-                          <NavLink to="about-us">
-                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                              theme === 'dark'  
-                                ? 'text-gray-200 hover:bg-gray-700'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}>About Us</div>
-                          </NavLink>
-                          <NavLink >
-                            <div className={`px-4 py-2 text-sm hover:bg-opacity-20 ${
-                              theme === 'dark'  
-                                ? 'text-gray-200 hover:bg-gray-700'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`} onClick={()=>Logout()} >Logout</div>
-                          </NavLink>
-                        </div>
-                      )} */}
                       {isOpen && (
                         <div
                           className={`absolute right-0  w-40 rounded-lg shadow-lg border transition-all duration-300 transform origin-top ${

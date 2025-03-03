@@ -54,6 +54,11 @@ const EditProfile = () => {
     setFormData({ ...formData, profilePic: file ? URL.createObjectURL(file) : "" });
   };
 
+  const handleImageClick = () => {
+    // Programmatically click the hidden file input
+    document.getElementById("profilePic").click();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -95,7 +100,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className={`pb-10 px-4 sm:px-6 lg:px-8 ${
+    <div className={`pb-10 px-4 sm:px-6 lg:px-8 mt-10 ${
       theme === 'dark' ? 'bg-gray-900' : 'bg-white'
     }`}>
       <div className={`max-w-xl mx-auto ${
@@ -115,16 +120,20 @@ const EditProfile = () => {
         
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="flex flex-col items-center space-y-4">
-            <div className="relative group">
-              <div className={`w-32 h-32 rounded-full overflow-hidden ring-4 ${
-                theme === 'dark' ? 'ring-gray-600' : 'ring-green-100'
-              } relative`}>
+            <div className="relative">
+              {/* Add onClick handler directly to the image container */}
+              <div 
+                className={`w-32 h-32 rounded-full overflow-hidden ring-4 ${
+                  theme === 'dark' ? 'ring-gray-600' : 'ring-green-100'
+                } relative cursor-pointer`}
+                onClick={handleImageClick}
+              >
                 <img
                   src={formData.profilePic || "/default-profile.png"}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
-                <div className={`absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${
+                <div className={`absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
                   theme === 'dark' ? 'bg-gray-900/70' : 'bg-black/50'
                 }`}>
                   <Camera className="w-8 h-8 text-white" />
@@ -139,11 +148,7 @@ const EditProfile = () => {
                 className="hidden"
               />
             </div>
-            <label htmlFor="profilePic" className={`text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              Click to change profile picture
-            </label>
+           
           </div>
 
           <div className="space-y-4">
@@ -238,8 +243,9 @@ export default EditProfile;
 // import { axiosInstance } from "../../utils/axios";
 
 // const EditProfile = () => {
-//   const { theme } = useContext(ThemeContext)
-// const { _id,role } = useParams();
+//   const { theme } = useContext(ThemeContext);
+//   const { _id, role } = useParams();
+//   const [isSubmitting, setIsSubmitting] = useState(false);
   
 //   const [formData, setFormData] = useState({
 //     name: "",
@@ -247,9 +253,10 @@ export default EditProfile;
 //     phone: "",
 //     profilePic: "",
 //   });
-//    useEffect(() => {
-//       window.scrollTo(0, 0);
-//     }, []);
+
+//   useEffect(() => {
+//     window.scrollTo(0, 0);
+//   }, []);
 
 //   const [image, setImage] = useState(null);
 //   const navigate = useNavigate();
@@ -262,11 +269,11 @@ export default EditProfile;
 //         });
 //         setFormData(prevState => ({
 //           ...prevState,
-//           ...response.data.data, // Merge API data while keeping initial properties
+//           ...response.data.data,
 //         }));
 //       } catch (error) {
 //         console.error("Error fetching user details:", error);
-        
+//         toast.error("Failed to fetch user details");
 //       }
 //     };
 //     fetchUserDetails();
@@ -285,11 +292,11 @@ export default EditProfile;
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
+//     setIsSubmitting(true);
 //     try {
 //       const data = new FormData();
 //       data.append("name", formData.name);
 //       data.append("email", formData.email);
-      
 //       data.append("phone", formData.phone);
       
 //       if (image) {
@@ -308,23 +315,23 @@ export default EditProfile;
 //       );
       
 //       if(response.data.success === true) {
-//         if (role==="user"){
+//         toast.success("Profile updated successfully!");
+//         if (role === "user") {
 //           navigate(`/user/${_id}/${role}`);
-//         }
-//         else{
+//         } else {
 //           navigate(`/${role}/user/${_id}/${role}`);
 //         }
-        
 //       }
       
 //     } catch (error) {
 //       console.error("Error updating profile:", error);
-     
+//       toast.error("Failed to update profile");
+//       setIsSubmitting(false);
 //     }
 //   };
 
 //   return (
-//     <div className={`pb-10  px-4 sm:px-6 lg:px-8 ${
+//     <div className={`pb-10 px-4 sm:px-6 lg:px-8 ${
 //       theme === 'dark' ? 'bg-gray-900' : 'bg-white'
 //     }`}>
 //       <div className={`max-w-xl mx-auto ${
@@ -440,18 +447,19 @@ export default EditProfile;
 //           <div className="pt-4">
 //             <button
 //               type="submit"
+//               disabled={isSubmitting}
 //               className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
 //                 theme === 'dark'
 //                   ? 'bg-green-600 hover:bg-green-700 text-white'
 //                   : 'bg-green-500 hover:bg-green-600 text-white'
-//               }`}
+//               } ${isSubmitting && 'opacity-75 cursor-not-allowed'}`}
 //             >
-//               Save Changes
+//               {isSubmitting ? 'Saving Changes...' : 'Save Changes'}
 //             </button>
 //           </div>
 //         </form>
 //       </div>
-//       <ToastContainer/>
+//       <ToastContainer />
 //     </div>
 //   );
 // };

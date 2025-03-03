@@ -195,8 +195,8 @@ const RestaurantUserHeader = ({ isMobileMenuOpen, setIsMobileMenuOpen,isOpen, se
                      
                         <div className={`px-4 py-2 text-sm cursor-pointer hover:bg-opacity-20 ${
                           theme === 'dark'  
-                            ? 'text-gray-200 hover:bg-gray-700'
-                            : 'text-gray-700 hover:bg-gray-100'
+                            ? ' hover:bg-gray-700 text-red-400'
+                            : ' hover:bg-gray-100 text-red-400'
                         }`} onClick={()=>LogOut()}>Logout</div>
                       
                   

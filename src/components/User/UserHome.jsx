@@ -49,6 +49,8 @@ const UserHome = () => {
     
                 
                 setCoupons(couponsResponse.data|| []);
+                console.log(couponsResponse.data);
+                
             } catch (error) {
                 console.error('Error fetching coupons:', error);
                 setCoupons([]);
@@ -212,7 +214,7 @@ const UserHome = () => {
                 </div>
             </div>
             
-            <div className='container mx-auto px-4 py-8'>
+            <div className='container mx-auto px-4 py-4'>
                 {/* Coupons Section */}
                 <div className="mb-12">
                     <div className="flex items-center justify-between mb-6">
@@ -250,7 +252,7 @@ const UserHome = () => {
                                             <span className={`inline-block text-sm font-bold px-3 py-1 rounded-full ${
                                                 theme === 'dark' ? 'bg-purple-700 text-white' : 'bg-purple-600 text-white'
                                             }`}>
-                                                {coupon.discountType === 'percentage' ? `${coupon.discountValue}% OFF` : `₹${coupon.discountValue} OFF`}
+                                                {coupon.discountType === 'percentage' ? `${coupon.discountPercentage}% OFF` : `${coupon.discountPercentage}% OFF`}
                                             </span>
                                         </div>
                                         <div className={`text-xs rounded-full px-2 py-1 ${
@@ -276,8 +278,8 @@ const UserHome = () => {
                                             theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-100'
                                         }`}>
                                             <div className="flex justify-between text-sm">
-                                                <span>Minimum order:</span>
-                                                <span className="font-medium">₹{coupon.minimumPurchase}</span>
+                                                <span>Minimum order: </span>
+                                                <span className="font-medium">₹100</span>
                                             </div>
                                             {coupon.maxDiscount && (
                                                 <div className="flex justify-between text-sm mt-1">

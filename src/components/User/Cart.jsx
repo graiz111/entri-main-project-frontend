@@ -44,24 +44,78 @@ const Cart = () => {
     }
   }, [userId]);
 
+  // const updateQuantity = async (cartItemId, newquantity) => {
+  //   try {
+  //     const response = await axiosInstance.put(`/cart/update/${cartItemId}`, {
+  //       userId,
+  //       quantity: newquantity
+  //     });
+
+  //     if (response.data.success) {
+  //       fetchCart();
+  //     } else {
+  //       toast.error("Failed to update quantity");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating quantity:", error);
+  //     toast.error("Failed to update quantity");
+  //   }
+  // };
   const updateQuantity = async (cartItemId, newquantity) => {
     try {
+      // Optimistically update the UI first
+      setCart(prevCart => {
+        const updatedItems = prevCart.items.map(item => {
+          if (item._id === cartItemId) {
+            // Calculate the price difference for this item
+            const priceDifference = item.item.price * (newquantity - item.quantity);
+            
+            return { 
+              ...item, 
+              quantity: newquantity 
+            };
+          }
+          return item;
+        });
+        
+        // Calculate new total price
+        const newTotalPrice = updatedItems.reduce(
+          (total, item) => total + item.item.price * item.quantity, 
+          0
+        );
+        
+        return {
+          ...prevCart,
+          items: updatedItems,
+          totalPrice: newTotalPrice
+        };
+      });
+      
+      // Update discounted total if applicable
+      if (discountedTotal !== null) {
+        const updatedItem = cart.items.find(item => item._id === cartItemId);
+        const priceDifference = updatedItem.item.price * (newquantity - updatedItem.quantity);
+        setDiscountedTotal(prev => prev + priceDifference);
+      }
+  
+      // Then send the update to the server
       const response = await axiosInstance.put(`/cart/update/${cartItemId}`, {
         userId,
         quantity: newquantity
       });
-
-      if (response.data.success) {
+  
+      if (!response.data.success) {
+        // If the server update fails, revert back to original data
         fetchCart();
-      } else {
         toast.error("Failed to update quantity");
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
+      // Revert to original data on error
+      fetchCart();
       toast.error("Failed to update quantity");
     }
   };
-
   const removeItem = async (cartItemId) => {
     try {
       const response = await axiosInstance.delete(`/cart/delete/${cartItemId}`, {
